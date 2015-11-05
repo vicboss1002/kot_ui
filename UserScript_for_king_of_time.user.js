@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         UserScript_for_king_of_time
 // @namespace    http://your.homepage/
-// @version      0.1
+// @version      1.1
 // @description  enter something useful
 // @author       daisuke.fuchise
 // @match        http://tampermonkey.net/scripts.php
@@ -9,14 +9,17 @@
 // ==/UserScript==
 
 
-
-
+// 以下の処理の流れを変更すると動作しなくなる可能性があります。
+// 　1.定義
+// 　2.初期処理
+// 　3.イベント登録
+// 　4.終了処理
 $(function() {
+    // -----定義
     // jQuery v2系をインクルード
     $('head').append('<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>');
     var schedule_pattern = '常駐';
-    var sStorage = sessionStorage;
-    var viewStatus = false;
+
     // CSSを定義
     var css = {
         '#my_dialog *': {
@@ -82,11 +85,6 @@ $(function() {
     // ----HTML定義
     // 入力補助ツール表示ボタンの生成
     $('#menu_container').append('<button id="my_view_button">入力補助表示</button>');
-    // 入力補助ツール表示ボタンの動作
-    $(document).find('#my_view_button').click(function(e) {
-        $myDialog.self.toggle();
-    });
-
 
     // 入力補助ツールダイアログ生成
     $('body').append('<div id="my_dialog"></div>');
@@ -118,28 +116,34 @@ $(function() {
     // -----初期化
     // セッションストレージから値を取得
     $myDialog.self.find('input').each(function() {
-        var value = sStorage.getItem($(this).attr('id'), $(this).val());
+        var value = sessionStorage.getItem($(this).attr('id'), $(this).val());
         $(this).val(value);
     });
+    
+
+    // -----イベント登録
+    // [入力補助表示]ボタンの動作
+    $(document).find('#my_view_button').click(function(e) {
+        $myDialog.self.toggle();
+    });
+    // [入力を保存]ボタンの動作
     // セッションストレージに値を保存
     $myDialog.self.find('#my_save_button').click(function() {
         $myDialog.self.find('#my_dialog_input_area input').each(function() {
-            sStorage.setItem($(this).attr('id'), $(this).val());
+            sessionStorage.setItem($(this).attr('id'), $(this).val());
         });
     });
-
-    // -----イベント登録
-    // チェックボックスの動作
+    // チェックボックスの状態変更時の動作
     $myDialog.self.find('input[type=checkbox]').click(function() {
         $(this).val($(this).prop('checked'));
     });
 
-    // 入力補助ツールの閉じるボタン動作
+    // [×]ボタン動作
     $myDialog.self.find('#my_dialog_close').click(function() {
         $myDialog.self.hide();
     });
 
-    // 入力補助ツールダイアログボタン動作
+    // [スケジュール入力]ボタン動作
     $myDialog.self.find('#my_schedule_enter_button').click(function() {
         $('#select_schedule_pattern_id > option').each(function() {
             if($(this).text() === schedule_pattern) {
@@ -160,23 +164,26 @@ $(function() {
         $('#schedule_break_minute').val(restTime);
     });
 
+    
     //-----終了処理
-    // 常に表示ボタンのチェック状態を反映
-    $myDialog.anyTimeShow = $myDialog.self.find('#my_dialog_anytime_show')
+    // チェックボックスの状態反映
+    $myDialog.self.find('input[type=checkbox]').each(function() {
+        var checked = $(this).val().toLowerCase() === 'true';
+        $(this).prop('checked', checked);
+    });
+
+    // 画面遷移時に表示するチェック時の動作
+    $myDialog.anyTimeShow = $myDialog.self.find('#my_dialog_anytime_show');
     if ($myDialog.anyTimeShow.val() === 'true') {
-        $myDialog.anyTimeShow.prop('checked', true);
         $myDialog.self.show();
     } else {
-        $myDialog.anyTimeShow.prop('checked', false);
-        $myDialog.self.hide()
+        $myDialog.self.hide();
     }
-    // 画面繊維時に自動入力するボタンの動作
+
+    // 画面遷移時に自動入力するチェック時の動作
     $myDialog.autoInput = $myDialog.self.find('#my_dialog_auto_input');
     if ($myDialog.autoInput.val() === 'true') {
-        $myDialog.autoInput.prop('checked', true);
         $myDialog.self.find('#my_schedule_enter_button').click();
-    } else {
-        $myDialog.autoInput.prop('checked', false);
     }
 
     // CSSを適用する
