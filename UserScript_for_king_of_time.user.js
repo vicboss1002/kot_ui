@@ -152,10 +152,8 @@ $(function() {
                 $(this).attr('selected', false);
             }
         });
-        var startTimeHour = $('#my_start_time_hour').val();
-        var startTimeMinute = $('#my_start_time_minute').val();
-        var endTimeHour = $('#my_end_time_hour').val();
-        var endTimeMinute = $('#my_end_time_minute').val();
+        var startTimeHour = $('#my_start_time_hour').val(), startTimeMinute = $('#my_start_time_minute').val();
+        var endTimeHour = $('#my_end_time_hour').val(), endTimeMinute = $('#my_end_time_minute').val();
         var restTime = $('#my_rest_time').val();
         $('#schedule_start_time_hour').val(startTimeHour);
         $('#schedule_start_time_minute').val(startTimeMinute);
