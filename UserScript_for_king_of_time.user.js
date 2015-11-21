@@ -143,7 +143,7 @@ $(function() {
         .append('<div><label for="my_dialog_schedule_pattern" class="my_dialog_labels">スケジュールパターン</label><div class="my_dialog_inputs"><select id="my_dialog_schedule_pattern"><option value="常駐" selected>常駐</option></select></div></div>')
         .append('<div><label for="my_start_time_hour my_start_time_minute" class="my_dialog_labels">出勤予定</label><div class="my_dialog_inputs"><input type="number" id="my_start_time_hour"></input>：<input type="number" id="my_start_time_minute"></input></div></div>')
         .append('<div><label for="my_end_time_hour my_end_time_minute" class="my_dialog_labels">退勤予定</label><div  class="my_dialog_inputs"><input type="number" id="my_end_time_hour"></input>：<input type="number" id="my_end_time_minute"></input></div></div>')
-        .append('<div><label for="number" id="my_rest_time" class="my_dialog_labels">休憩予定時間</label><div class="my_dialog_inputs"><input type="number" id="my_rest_time"></input>分</div></div>')
+        .append('<div><label for="my_rest_time" class="my_dialog_labels">休憩予定時間</label><div class="my_dialog_inputs"><input type="number" id="my_rest_time"></input>分</div></div>')
     ;
 
     $myDialog.content.checkboxArea
@@ -200,6 +200,7 @@ $(function() {
         var startTimeHour = $('#my_start_time_hour').val(), startTimeMinute = $('#my_start_time_minute').val();
         var endTimeHour = $('#my_end_time_hour').val(), endTimeMinute = $('#my_end_time_minute').val();
         var restTime = $('#my_rest_time').val();
+        console.log(restTime);
         $('#schedule_start_time_hour').val(startTimeHour);
         $('#schedule_start_time_minute').val(startTimeMinute);
         $('#schedule_end_time_hour').val(endTimeHour);
