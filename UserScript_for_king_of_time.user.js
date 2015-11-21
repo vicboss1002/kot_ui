@@ -173,7 +173,7 @@ $(function() {
     // [入力を保存]ボタンの動作
     // セッションストレージに値を保存
     $myDialog.content.buttonArea.find('#my_save_button').click(function() {
-        $myDialog.self.find('#my_dialog_input_area input').each(function() {
+        $myDialog.self.find('input').each(function() {
             sessionStorage.setItem($(this).attr('id'), $(this).val());
         });
     });
