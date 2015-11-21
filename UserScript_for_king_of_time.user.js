@@ -1,10 +1,13 @@
 // ==UserScript==
 // @name         UserScript_for_king_of_time
 // @namespace    http://your.homepage/
-// @version      1.1
-// @description  enter something useful
+// @version      1.2
+// @description  This script will be running on the site of "King of Time".
 // @author       daisuke.fuchise
-// @match        http://tampermonkey.net/scripts.php
+// @include      https://s3.kingtime.jp/admin/*
+// @exclude      https://s3.kingtime.jp/admin/*?page_id=/employee/request_list*
+// @exclude      https://s3.kingtime.jp/admin/*?page_id=/employee/change_password*
+// @exclude      https://s3.kingtime.jp/admin/*?page_id=/schedule/schedule_pattern_list_for_employee*
 // @grant        none
 // ==/UserScript==
 
@@ -46,10 +49,6 @@ $(function() {
             'background': 'navy',
             'color': 'white',
             'padding': '0.5em',
-        },
-        '#my_dialog button': {
-            'background': 'white',
-            'border': '1px solid silver outset'
         },
         '#my_dialog_content': {
             'margin': '0.5em'
@@ -96,6 +95,9 @@ $(function() {
             'padding': '0.5em',
             'border': 'outset 1px silver',
         },
+        '#my_dialog button:hover': {
+            'background': 'red'
+        },
         '#my_dialog_close': {
             'position': 'absolute',
             'top': 5,
@@ -105,6 +107,7 @@ $(function() {
             'color': 'white',
             'border': 'none'
         }
+        
     };
 
     // ----HTML定義
