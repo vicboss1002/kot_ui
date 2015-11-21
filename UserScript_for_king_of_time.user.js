@@ -25,7 +25,8 @@ $(function() {
         '#my_dialog *': {
             'margin': 0,
             'padding': 0,
-            'font-family': 'メイリオ'
+            'border': 'none',
+            'font-family': 'メイリオ',
         },
         '#my_dialog': {
             'background': 'white',
@@ -34,8 +35,10 @@ $(function() {
             'left': 0,
             'border': '1px solid silver',
             'box-shadow': '5px 5px 5px 5px gray',
-            'text-align': 'center',
             'border-radius': '0.5em'
+        },
+        '#my_dialog_header': {
+            'text-align': 'center'
         },
         '#my_dialog h2': {
             'font-size': '0.8em',
@@ -48,28 +51,50 @@ $(function() {
             'background': 'white',
             'border': '1px solid silver outset'
         },
-        '#my_dialog_input_area': {
+        '#my_dialog_content': {
             'margin': '0.5em'
         },
-        '#my_dialog_button_area': {
-            'margin': '0 0 0.5em 0'
+        '.my_dialog_labels, .my_dialog_inputs': {
+            'width': '150px',
+            'padding': '0 5px',
+            'float': 'left',
+            'white-space': 'nowrap'
+
         },
-        '#my_dialog_input_area input': {
-            'width': '50px',
+        '.my_dialog_labels': {
+            'text-align': 'center',
+        },
+        '.my_dialog_checkboxes': {
+            'vertical-align': 'middle'
+        },
+        '#my_dialog_checkbox_area': {
+            'padding': '0 2%',
+            'clear': 'both'
+        },
+        '#my_dialog_button_area': {
+            'margin': '0 0 0.5em 0',
+            'text-align': 'center'
+        },
+        '#my_dialog input, #my_dialog select': {
             'background': 'white',
-            'border': '1px solid silver inset'
+            'border': 'inset 1px silver',
+            'margin': '0 0.5em'
+        },
+        '#my_dialog input': {
+            'width': '50px'
         },
         '#my_dialog_input_area input[type=number]': {
             'text-aligin': 'right'
         },
-        '#my_dialog_input_area label': {
+        '#my_dialog label': {
             'display': 'block',
             'padding': '0.2em 1em',
             'background': 'white',
             'border': 'none'
         },
-        '#my_dialog_button_area button': {
-            'padding': '0.5em'
+        '#my_dialog button': {
+            'padding': '0.5em',
+            'border': 'outset 1px silver',
         },
         '#my_dialog_close': {
             'position': 'absolute',
@@ -89,28 +114,46 @@ $(function() {
     // 入力補助ツールダイアログ生成
     $('body').append('<div id="my_dialog"></div>');
     var $myDialog = {
-        self: $(document).find('#my_dialog')
+        self: $(document).find('#my_dialog'),
+
     };
+
     $myDialog.self
-    .append('<h2>入力補助ダイアログ</h2>')
-    .append('<div id="my_dialog_input_area"></div>')
-    .append('<div id="my_dialog_button_area"></div>')
-    .append('<button id="my_dialog_close" title="閉じる">×</button>')
+        .append('<div id="my_dialog_header"></div>')
+        .append('<div id="my_dialog_content"></div>')
     ;
 
-    $myDialog.inputArea = $myDialog.self.find('#my_dialog_input_area');
-    $myDialog.inputArea
-    .append('<label>スケジュールパターン <select id="my_dialog_schedule_pattern"><option value="常駐" selected>常駐</option></select></label>')
-    .append('<label>出勤予定 <input type="number" id="my_start_time_hour"></input>：<input type="number" id="my_start_time_minute"></input></label>')
-    .append('<label>退勤予定 <input type="number" id="my_end_time_hour"></input>：<input type="number" id="my_end_time_minute"></input></label>')
-    .append('<label>休憩予定時間 <input type="number" id="my_rest_time"></input>分</label>')
-    .append('<label><input type="checkbox" id="my_dialog_anytime_show" value="false"></input>画面遷移時に表示する</label>')
-    .append('<label><input type="checkbox" id="my_dialog_auto_input" value="false"></input>画面遷移時に自動入力する</label>')
+    $myDialog.header = $myDialog.self.find('#my_dialog_header');
+    $myDialog.content = $myDialog.self.find('#my_dialog_content');
+    $myDialog.content
+        .append('<div id="my_dialog_input_area"></div>')
+        .append('<div id="my_dialog_checkbox_area"></div>')
+        .append('<div id="my_dialog_button_area"></div>')
+    ;
+    $myDialog.content.inputArea = $myDialog.content.find('#my_dialog_input_area');
+    $myDialog.content.checkboxArea = $myDialog.content.find('#my_dialog_checkbox_area');
+    $myDialog.content.buttonArea = $myDialog.content.find('#my_dialog_button_area');
+
+    $myDialog.header
+        .append('<h2>入力補助ダイアログ</h2>')
+        .append('<button id="my_dialog_close" title="閉じる">×</button>')
     ;
 
-    $myDialog.self.find('#my_dialog_button_area')
-    .append('<button id="my_save_button">入力を保存</button>')
-    .append('<button id="my_schedule_enter_button">スケジュール入力</button>')
+    $myDialog.content.inputArea
+        .append('<div><label for="my_dialog_schedule_pattern" class="my_dialog_labels">スケジュールパターン</label><div class="my_dialog_inputs"><select id="my_dialog_schedule_pattern"><option value="常駐" selected>常駐</option></select></div></div>')
+        .append('<div><label for="my_start_time_hour my_start_time_minute" class="my_dialog_labels">出勤予定</label><div class="my_dialog_inputs"><input type="number" id="my_start_time_hour"></input>：<input type="number" id="my_start_time_minute"></input></div></div>')
+        .append('<div><label for="my_end_time_hour my_end_time_minute" class="my_dialog_labels">退勤予定</label><div  class="my_dialog_inputs"><input type="number" id="my_end_time_hour"></input>：<input type="number" id="my_end_time_minute"></input></div></div>')
+        .append('<div><label for="number" id="my_rest_time" class="my_dialog_labels">休憩予定時間</label><div class="my_dialog_inputs"><input type="number" id="my_rest_time"></input>分</div></div>')
+    ;
+
+    $myDialog.content.checkboxArea
+        .append('<div class="my_dialog_checkboxes"><label for="my_dialog_anytime_show"><input type="checkbox" id="my_dialog_anytime_show" value="false"></input>画面遷移時に表示する</label></div>')
+        .append('<div class="my_dialog_checkboxes"><label for="my_dialog_auto_input"><input type="checkbox" id="my_dialog_auto_input" value="false"></input>画面遷移時に自動入力する</label></div>')
+    ;
+
+    $myDialog.content.buttonArea
+        .append('<button id="my_save_button">入力を保存</button>')
+        .append('<button id="my_schedule_enter_button">スケジュール入力</button>')
     ;
 
     // -----初期化
@@ -119,21 +162,23 @@ $(function() {
         var value = sessionStorage.getItem($(this).attr('id'), $(this).val());
         $(this).val(value);
     });
-    
+
 
     // -----イベント登録
     // [入力補助表示]ボタンの動作
     $(document).find('#my_view_button').click(function(e) {
         $myDialog.self.toggle();
     });
+    
     // [入力を保存]ボタンの動作
     // セッションストレージに値を保存
-    $myDialog.self.find('#my_save_button').click(function() {
+    $myDialog.content.buttonArea.find('#my_save_button').click(function() {
         $myDialog.self.find('#my_dialog_input_area input').each(function() {
             sessionStorage.setItem($(this).attr('id'), $(this).val());
         });
     });
-    // チェックボックスの状態変更時の動作
+
+    // チェックボックスをクリック時の処理
     $myDialog.self.find('input[type=checkbox]').click(function() {
         $(this).val($(this).prop('checked'));
     });
@@ -144,7 +189,7 @@ $(function() {
     });
 
     // [スケジュール入力]ボタン動作
-    $myDialog.self.find('#my_schedule_enter_button').click(function() {
+    $myDialog.content.buttonArea.find('#my_schedule_enter_button').click(function() {
         $('#select_schedule_pattern_id > option').each(function() {
             if($(this).text() === schedule_pattern) {
                 $(this).attr('selected', true);
@@ -162,7 +207,7 @@ $(function() {
         $('#schedule_break_minute').val(restTime);
     });
 
-    
+
     //-----終了処理
     // チェックボックスの状態反映
     $myDialog.self.find('input[type=checkbox]').each(function() {
