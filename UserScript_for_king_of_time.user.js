@@ -8,6 +8,7 @@
 // @exclude      https://s3.kingtime.jp/admin/*?page_id=/employee/request_list*
 // @exclude      https://s3.kingtime.jp/admin/*?page_id=/employee/change_password*
 // @exclude      https://s3.kingtime.jp/admin/*?page_id=/schedule/schedule_pattern_list_for_employee*
+// @required     https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js
 // @grant        none
 // ==/UserScript==
 
@@ -20,7 +21,6 @@
 $(function() {
     // -----定義
     // jQuery v2系をインクルード
-    $('head').append('<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>');
     var schedule_pattern = '常駐';
 
     // CSSを定義
@@ -118,7 +118,6 @@ $(function() {
     $('body').append('<div id="my_dialog"></div>');
     var $myDialog = {
         self: $(document).find('#my_dialog'),
-
     };
 
     $myDialog.self
