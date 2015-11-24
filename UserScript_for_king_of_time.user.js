@@ -28,12 +28,14 @@ $(function() {
         '#my_dialog *': {
             'margin': 0,
             'padding': 0,
-            'border': 'none',
             'font-family': 'メイリオ',
+        },
+        '#my_dialog input, #my_dialog select': {
+            'border': 'none'
         },
         '#my_dialog': {
             'background': 'white',
-            'position': 'fixed',
+            'position': 'absolute',
             'top': 0,
             'left': 0,
             'border': '1px solid silver',
@@ -93,10 +95,6 @@ $(function() {
         },
         '#my_dialog button': {
             'padding': '0.5em',
-            'border': 'outset 1px silver',
-        },
-        '#my_dialog button:hover': {
-            'background': 'red'
         },
         '#my_dialog_close': {
             'position': 'absolute',
@@ -107,7 +105,6 @@ $(function() {
             'color': 'white',
             'border': 'none'
         }
-        
     };
 
     // ----HTML定義
@@ -131,10 +128,13 @@ $(function() {
         .append('<div id="my_dialog_input_area"></div>')
         .append('<div id="my_dialog_checkbox_area"></div>')
         .append('<div id="my_dialog_button_area"></div>')
+        .append('<div id="my_dialog_hidden_area"></div>')
     ;
     $myDialog.content.inputArea = $myDialog.content.find('#my_dialog_input_area');
     $myDialog.content.checkboxArea = $myDialog.content.find('#my_dialog_checkbox_area');
     $myDialog.content.buttonArea = $myDialog.content.find('#my_dialog_button_area');
+    $myDialog.content.hiddenArea = $myDialog.content.find('#my_dialog_hidden_area');
+
 
     $myDialog.header
         .append('<h2>入力補助ダイアログ</h2>')
@@ -154,8 +154,13 @@ $(function() {
     ;
 
     $myDialog.content.buttonArea
-        .append('<button id="my_save_button">入力を保存</button>')
+        .append('<button id="my_save_button">状態を保存</button>')
         .append('<button id="my_schedule_enter_button">スケジュール入力</button>')
+    ;
+
+    $myDialog.content.hiddenArea
+        .append('<input id="my_dialog_page_x" type="hidden" value="0"></input>')
+        .append('<input id="my_dialog_page_y" type="hidden" value="0"></input>')
     ;
 
     // -----初期化
@@ -167,11 +172,39 @@ $(function() {
 
 
     // -----イベント登録
+    $myDialog.header.mousedown(function(e) {
+        var parsePosition = function(position) {
+            return parseInt(position.replace('px', ''));
+        };
+        var beforeX = e.pageX;
+        var beforeY = e.pageY;
+        var beforeTop = parsePosition($myDialog.self.css('top'));
+        var beforeLeft = parsePosition($myDialog.self.css('left'));
+        var afterX = 0;
+        var afterY = 0;
+        $myDialog.header.live('mousemove', function(e) {
+            afterY = beforeTop + (e.pageY - beforeY);
+            afterX = beforeLeft + (e.pageX - beforeX);
+            $myDialog.self
+                .css('top', afterY)
+                .css('left', afterX)
+            ;
+            return false;
+        });
+        $myDialog.header.mouseup(function(e) {
+            $myDialog.content.hiddenArea.find('#my_dialog_page_x').val(afterX);
+            $myDialog.content.hiddenArea.find('#my_dialog_page_y').val(afterY);
+            $myDialog.header.die('mousemove');
+        });
+        return false;
+    });
+
+
     // [入力補助表示]ボタンの動作
     $(document).find('#my_view_button').click(function(e) {
         $myDialog.self.toggle();
     });
-    
+
     // [入力を保存]ボタンの動作
     // セッションストレージに値を保存
     $myDialog.content.buttonArea.find('#my_save_button').click(function() {
@@ -232,6 +265,7 @@ $(function() {
         $myDialog.self.find('#my_schedule_enter_button').click();
     }
 
+
     // CSSを適用する
     applyCSS(css);
     function applyCSS(css) {
@@ -242,4 +276,8 @@ $(function() {
             }
         }
     }
+    $myDialog.self
+        .css('top', $myDialog.self.find('#my_dialog_page_y').val() + 'px')
+        .css('left', $myDialog.self.find('#my_dialog_page_x').val() + 'px')
+    ;
 });
