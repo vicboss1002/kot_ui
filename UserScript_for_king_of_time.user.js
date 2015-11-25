@@ -31,11 +31,13 @@ $(function() {
             'font-family': 'メイリオ',
         },
         '#my_dialog input, #my_dialog select': {
-            'border': 'none'
+            'background': 'white',
+            'border': 'inset 1px silver',
+            'margin': '0 0.5em'
         },
         '#my_dialog': {
             'background': 'white',
-            'position': 'absolute',
+            'position': 'fixed',
             'top': 0,
             'left': 0,
             'border': '1px solid silver',
@@ -75,11 +77,6 @@ $(function() {
         '#my_dialog_button_area': {
             'margin': '0 0 0.5em 0',
             'text-align': 'center'
-        },
-        '#my_dialog input, #my_dialog select': {
-            'background': 'white',
-            'border': 'inset 1px silver',
-            'margin': '0 0.5em'
         },
         '#my_dialog input': {
             'width': '50px'
@@ -172,6 +169,7 @@ $(function() {
 
 
     // -----イベント登録
+    // ドラッグ移動処理
     $myDialog.header.mousedown(function(e) {
         var parsePosition = function(position) {
             return parseInt(position.replace('px', ''));
@@ -276,6 +274,7 @@ $(function() {
             }
         }
     }
+    // ダイアログの初期ポジション設定
     $myDialog.self
         .css('top', $myDialog.self.find('#my_dialog_page_y').val() + 'px')
         .css('left', $myDialog.self.find('#my_dialog_page_x').val() + 'px')
