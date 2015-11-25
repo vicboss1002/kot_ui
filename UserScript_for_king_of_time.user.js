@@ -188,13 +188,14 @@ $(function() {
                 .css('top', afterY)
                 .css('left', afterX)
             ;
+            $myDialog.content.hiddenArea.find('#my_dialog_page_x').val(afterX);
+            $myDialog.content.hiddenArea.find('#my_dialog_page_y').val(afterY);
             return false;
         });
         return false;
     });
     $('body').mouseup(function(e) {
-        $myDialog.content.hiddenArea.find('#my_dialog_page_x').val(afterX);
-        $myDialog.content.hiddenArea.find('#my_dialog_page_y').val(afterY);
+
         $('body').die('mousemove');
     });
 
