@@ -42,7 +42,8 @@ $(function() {
             'left': 0,
             'border': '1px solid silver',
             'box-shadow': '5px 5px 5px 5px gray',
-            'border-radius': '0.5em'
+            'border-radius': '0.5em',
+            'z-index': '99'
         },
         '#my_dialog_header': {
             'text-align': 'center'
@@ -170,6 +171,8 @@ $(function() {
 
     // -----イベント登録
     // ドラッグ移動処理
+    var afterX = 0;
+    var afterY = 0;
     $myDialog.header.mousedown(function(e) {
         var parsePosition = function(position) {
             return parseInt(position.replace('px', ''));
@@ -178,9 +181,7 @@ $(function() {
         var beforeY = e.pageY;
         var beforeTop = parsePosition($myDialog.self.css('top'));
         var beforeLeft = parsePosition($myDialog.self.css('left'));
-        var afterX = 0;
-        var afterY = 0;
-        $myDialog.header.live('mousemove', function(e) {
+        $('body').live('mousemove', function(e) {
             afterY = beforeTop + (e.pageY - beforeY);
             afterX = beforeLeft + (e.pageX - beforeX);
             $myDialog.self
@@ -189,12 +190,12 @@ $(function() {
             ;
             return false;
         });
-        $myDialog.header.mouseup(function(e) {
-            $myDialog.content.hiddenArea.find('#my_dialog_page_x').val(afterX);
-            $myDialog.content.hiddenArea.find('#my_dialog_page_y').val(afterY);
-            $myDialog.header.die('mousemove');
-        });
         return false;
+    });
+    $('body').mouseup(function(e) {
+        $myDialog.content.hiddenArea.find('#my_dialog_page_x').val(afterX);
+        $myDialog.content.hiddenArea.find('#my_dialog_page_y').val(afterY);
+        $('body').die('mousemove');
     });
 
 
