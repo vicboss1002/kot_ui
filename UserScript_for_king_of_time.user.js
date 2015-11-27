@@ -145,8 +145,8 @@ $(function() {
         .append('<div><label for="my_rest_time" class="my_dialog_labels">休憩予定時間</label><div class="my_dialog_inputs"><input type="number" id="my_rest_time"></input>分</div></div>')
     ;
     $myDialog.content.inputArea.find('#my_dialog_schedule_pattern')
-    .append('<option value="常駐">常駐</option>')
-    .append('<option value="休出">休出</option>')
+        .append('<option value="常駐">常駐</option>')
+        .append('<option value="休出">休出</option>')
     ;
 
     $myDialog.content.checkboxArea
@@ -166,11 +166,10 @@ $(function() {
 
     // -----初期化
     // セッションストレージから値を取得
-    $myDialog.self.find('input').each(function() {
+    $myDialog.self.find(':input').each(function() {
         var value = sessionStorage.getItem($(this).attr('id'), $(this).val());
         $(this).val(value);
     });
-
 
     // -----イベント登録
     // ドラッグ移動処理
@@ -211,7 +210,7 @@ $(function() {
     // [入力を保存]ボタンの動作
     // セッションストレージに値を保存
     $myDialog.content.buttonArea.find('#my_save_button').click(function() {
-        $myDialog.self.find('input').each(function() {
+        $myDialog.self.find(':input').each(function() {
             sessionStorage.setItem($(this).attr('id'), $(this).val());
         });
     });
