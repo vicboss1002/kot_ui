@@ -183,7 +183,7 @@ $(function() {
         var beforeY = e.pageY;
         var beforeTop = parsePosition($myDialog.self.css('top'));
         var beforeLeft = parsePosition($myDialog.self.css('left'));
-        $('body').live('mousemove', function(e) {
+        $('body').live('mousemove.draggable', function(e) {
             afterY = beforeTop + (e.pageY - beforeY);
             afterX = beforeLeft + (e.pageX - beforeX);
             $myDialog.self
@@ -197,8 +197,7 @@ $(function() {
         return false;
     });
     $('body').mouseup(function(e) {
-
-        $('body').die('mousemove');
+        $('body').die('mousemove.draggable');
     });
 
 
