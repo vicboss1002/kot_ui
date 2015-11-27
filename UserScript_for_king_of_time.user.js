@@ -21,7 +21,6 @@
 $(function() {
     // -----定義
     // jQuery v2系をインクルード
-    var schedule_pattern = '常駐';
 
     // CSSを定義
     var css = {
@@ -140,10 +139,14 @@ $(function() {
     ;
 
     $myDialog.content.inputArea
-        .append('<div><label for="my_dialog_schedule_pattern" class="my_dialog_labels">スケジュールパターン</label><div class="my_dialog_inputs"><select id="my_dialog_schedule_pattern"><option value="常駐" selected>常駐</option></select></div></div>')
+        .append('<div><label for="my_dialog_schedule_pattern" class="my_dialog_labels">スケジュールパターン</label><div class="my_dialog_inputs"><select id="my_dialog_schedule_pattern"></select></div></div>')
         .append('<div><label for="my_start_time_hour my_start_time_minute" class="my_dialog_labels">出勤予定</label><div class="my_dialog_inputs"><input type="number" id="my_start_time_hour"></input>：<input type="number" id="my_start_time_minute"></input></div></div>')
         .append('<div><label for="my_end_time_hour my_end_time_minute" class="my_dialog_labels">退勤予定</label><div  class="my_dialog_inputs"><input type="number" id="my_end_time_hour"></input>：<input type="number" id="my_end_time_minute"></input></div></div>')
         .append('<div><label for="my_rest_time" class="my_dialog_labels">休憩予定時間</label><div class="my_dialog_inputs"><input type="number" id="my_rest_time"></input>分</div></div>')
+    ;
+    $myDialog.content.inputArea.find('#my_dialog_schedule_pattern')
+    .append('<option value="常駐">常駐</option>')
+    .append('<option value="休出">休出</option>')
     ;
 
     $myDialog.content.checkboxArea
@@ -225,6 +228,7 @@ $(function() {
 
     // [スケジュール入力]ボタン動作
     $myDialog.content.buttonArea.find('#my_schedule_enter_button').click(function() {
+        var schedule_pattern = $('#my_dialog_schedule_pattern').val();
         $('#select_schedule_pattern_id > option').each(function() {
             if($(this).text() === schedule_pattern) {
                 $(this).attr('selected', true);
