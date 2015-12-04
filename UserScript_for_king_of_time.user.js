@@ -20,7 +20,6 @@
 // 　4.終了処理
 $(function() {
     // -----定義
-    // jQuery v2系をインクルード
 
     // CSSを定義
     var css = {
@@ -29,30 +28,32 @@ $(function() {
             'padding': 0,
             'font-family': 'メイリオ',
         },
-        '#my_dialog input, #my_dialog select': {
-            'background': 'white',
-            'border': 'inset 1px silver',
-            'margin': '0 0.5em'
-        },
         '#my_dialog': {
             'background': 'white',
             'position': 'fixed',
             'top': 0,
             'left': 0,
-            'border': '1px solid silver',
+            'border': 'ridge 2px navy',
             'box-shadow': '5px 5px 5px 5px gray',
             'border-radius': '0.5em',
             'z-index': '99'
         },
-        '#my_dialog_header': {
-            'text-align': 'center'
-        },
         '#my_dialog h2': {
+            'font-size': '1em'
+        },
+        '#my_dialog input, #my_dialog select': {
+            'background': 'white',
+            'border': 'inset 1px silver',
+            'margin': '0 0.5em'
+        },
+        '#my_dialog_header': {
+            'text-align': 'center',
             'font-size': '0.8em',
             'font-weight': 'bold',
             'background': 'navy',
             'color': 'white',
             'padding': '0.5em',
+            'box-shadow': '2px 2xp 2xp 2xp gray'
         },
         '#my_dialog_content': {
             'margin': '0.5em'
@@ -62,7 +63,6 @@ $(function() {
             'padding': '0 5px',
             'float': 'left',
             'white-space': 'nowrap'
-
         },
         '.my_dialog_labels': {
             'text-align': 'center',
@@ -173,25 +173,39 @@ $(function() {
 
     // -----イベント登録
     // ドラッグ移動処理
-    var afterX = 0;
-    var afterY = 0;
+    var propeties = {
+        draggableElement: {
+            before: {
+                x: 0,
+                y: 0,
+                top: 0,
+                left: 0
+            },
+            after: {
+                x: 0,
+                y: 0
+            }
+        }
+    }
     $myDialog.header.mousedown(function(e) {
         var parsePosition = function(position) {
             return parseInt(position.replace('px', ''));
         };
-        var beforeX = e.pageX;
-        var beforeY = e.pageY;
-        var beforeTop = parsePosition($myDialog.self.css('top'));
-        var beforeLeft = parsePosition($myDialog.self.css('left'));
+        propeties.draggableElement.before = {
+            x: e.pageX,
+            y: e.pageY,
+            top: parsePosition($myDialog.self.css('top')),
+            left: parsePosition($myDialog.self.css('left'))
+        }
         $('body').live('mousemove.draggable', function(e) {
-            afterY = beforeTop + (e.pageY - beforeY);
-            afterX = beforeLeft + (e.pageX - beforeX);
+            propeties.draggableElement.y = propeties.draggableElement.before.top + (e.pageY - propeties.draggableElement.before.y);
+            propeties.draggableElement.x = propeties.draggableElement.before.left + (e.pageX - propeties.draggableElement.before.x);
             $myDialog.self
-                .css('top', afterY)
-                .css('left', afterX)
+                .css('top', propeties.draggableElement.y)
+                .css('left', propeties.draggableElement.x)
             ;
-            $myDialog.content.hiddenArea.find('#my_dialog_page_x').val(afterX);
-            $myDialog.content.hiddenArea.find('#my_dialog_page_y').val(afterY);
+            $myDialog.content.hiddenArea.find('#my_dialog_page_x').val(propeties.draggableElement.x);
+            $myDialog.content.hiddenArea.find('#my_dialog_page_y').val(propeties.draggableElement.y);
             return false;
         });
         return false;
