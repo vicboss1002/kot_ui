@@ -1,7 +1,8 @@
 // ==UserScript==
 // @name         UserScript_for_king_of_time
 // @namespace    http://your.homepage/
-// @version      1.2
+// @version      1.3
+// @updateURL    https://raw.githubusercontent.com/vicboss1002/kot_ui/master/UserScript_for_king_of_time.user.js
 // @description  This script will be running on the site of "King of Time".
 // @author       daisuke.fuchise
 // @include      https://s3.kingtime.jp/admin/*
@@ -9,7 +10,8 @@
 // @exclude      https://s3.kingtime.jp/admin/*?page_id=/employee/change_password*
 // @exclude      https://s3.kingtime.jp/admin/*?page_id=/schedule/schedule_pattern_list_for_employee*
 // @required     https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js
-// @grant        none
+// @grant        GM_addStyle
+// @grant        GM_getResourceText
 // ==/UserScript==
 
 
@@ -20,7 +22,6 @@
 // 　4.終了処理
 $(function() {
     // -----定義
-
     // CSSを定義
     var css = {
         '#my_dialog *': {
@@ -283,15 +284,13 @@ $(function() {
 
 
     // CSSを適用する
-    applyCSS(css);
-    function applyCSS(css) {
-        for (var selector in css) {
-            var $selector = $(selector);
-            for (var propety in css[selector]) {
-                $selector.css(propety, css[selector][propety]);
-            }
-        }
-    }
+    Object.keys(css).forEach(function(selector) {
+        var $selector = $(selector);
+        Object.keys(css[selector]).forEach(function(property) {
+            $selector.css(property, css[selector][property]);
+        });
+    });
+
     // ダイアログの初期ポジション設定
     $myDialog.self
         .css('top', $myDialog.self.find('#my_dialog_page_y').val() + 'px')
