@@ -1,10 +1,10 @@
 // ==UserScript==
 // @name         UserScript_for_king_of_time
-// @namespace    http://your.homepage/
-// @version      1.3
+// @namespace    https://raw.githubusercontent.com/vicboss1002/kot_ui/master/UserScript_for_king_of_time.user.js
+// @version      1.4
 // @updateURL    https://raw.githubusercontent.com/vicboss1002/kot_ui/master/UserScript_for_king_of_time.user.js
 // @description  This script will be running on the site of "King of Time".
-// @author       daisuke.fuchise
+// @author       daisuke.f
 // @include      https://s3.kingtime.jp/admin/*
 // @exclude      https://s3.kingtime.jp/admin/*?page_id=/employee/request_list*
 // @exclude      https://s3.kingtime.jp/admin/*?page_id=/employee/change_password*
@@ -24,6 +24,15 @@ $(function() {
     // -----定義
     // CSSを定義
     var css = {
+        '#my_view_button': {
+            'font-size': '0.2em',
+            'background-color': 'DarkBlue',
+            'color': 'white',
+            'border': 'outset 2px DarkBlue',
+            'border-radius': '5px',
+            'padding': '0.5em',
+            'box-shadow': '1px 1px 5px 2px gray'
+        },
         '#my_dialog *': {
             'margin': 0,
             'padding': 0,
@@ -35,7 +44,7 @@ $(function() {
             'top': 0,
             'left': 0,
             'border': 'ridge 2px navy',
-            'box-shadow': '5px 5px 5px 5px gray',
+            'box-shadow': '2px 2px 10px 4px gray',
             'border-radius': '0.5em',
             'z-index': '99'
         },
@@ -107,7 +116,7 @@ $(function() {
 
     // ----HTML定義
     // 入力補助ツール表示ボタンの生成
-    $('#menu_container').append('<button id="my_view_button">入力補助表示</button>');
+    $('#menu_container').append('<button id="my_view_button">拡張ダイアログ表示</button>');
 
     // 入力補助ツールダイアログ生成
     $('body').append('<div id="my_dialog"></div>');
@@ -135,7 +144,7 @@ $(function() {
 
 
     $myDialog.header
-        .append('<h2>入力補助ダイアログ</h2>')
+        .append('<h2>拡張ダイアログ</h2>')
         .append('<button id="my_dialog_close" title="閉じる">×</button>')
     ;
 
@@ -151,7 +160,7 @@ $(function() {
     ;
 
     $myDialog.content.checkboxArea
-        .append('<div class="my_dialog_checkboxes"><label for="my_dialog_anytime_show"><input type="checkbox" id="my_dialog_anytime_show" value="false"></input>画面遷移時に表示する</label></div>')
+        .append('<div class="my_dialog_checkboxes"><label for="my_dialog_anytime_show"><input type="checkbox" id="my_dialog_anytime_hidden" value="false"></input>画面遷移時に非表示する</label></div>')
         .append('<div class="my_dialog_checkboxes"><label for="my_dialog_auto_input"><input type="checkbox" id="my_dialog_auto_input" value="false"></input>画面遷移時に自動入力する</label></div>')
     ;
 
@@ -269,11 +278,11 @@ $(function() {
     });
 
     // 画面遷移時に表示するチェック時の動作
-    $myDialog.anyTimeShow = $myDialog.self.find('#my_dialog_anytime_show');
-    if ($myDialog.anyTimeShow.val() === 'true') {
-        $myDialog.self.show();
-    } else {
+    $myDialog.anyTimeHidden = $myDialog.self.find('#my_dialog_anytime_hidden');
+    if ($myDialog.anyTimeHidden.val() === 'true') {
         $myDialog.self.hide();
+    } else {
+        $myDialog.self.show();
     }
 
     // 画面遷移時に自動入力するチェック時の動作
@@ -286,9 +295,7 @@ $(function() {
     // CSSを適用する
     Object.keys(css).forEach(function(selector) {
         var $selector = $(selector);
-        Object.keys(css[selector]).forEach(function(property) {
-            $selector.css(property, css[selector][property]);
-        });
+        $(selector).css(css[selector]);
     });
 
     // ダイアログの初期ポジション設定
