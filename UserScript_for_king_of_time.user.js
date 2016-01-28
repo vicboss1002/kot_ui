@@ -20,7 +20,7 @@
 // 　2.初期処理
 // 　3.イベント登録
 // 　4.終了処理
-$(function() {
+$(document).ready(function() {
     // -----定義
     // CSSを定義
     var css = {
@@ -184,7 +184,7 @@ $(function() {
     // -----イベント登録
     // ドラッグ移動処理
     var propeties = {
-        draggableElement: {
+        draggable: {
             before: {
                 x: 0,
                 y: 0,
@@ -201,21 +201,21 @@ $(function() {
         var parsePosition = function(position) {
             return parseInt(position.replace('px', ''));
         };
-        propeties.draggableElement.before = {
+        propeties.draggable.before = {
             x: e.pageX,
             y: e.pageY,
             top: parsePosition($myDialog.self.css('top')),
             left: parsePosition($myDialog.self.css('left'))
         }
         $('body').live('mousemove.draggable', function(e) {
-            propeties.draggableElement.y = propeties.draggableElement.before.top + (e.pageY - propeties.draggableElement.before.y);
-            propeties.draggableElement.x = propeties.draggableElement.before.left + (e.pageX - propeties.draggableElement.before.x);
+            propeties.draggable.y = propeties.draggable.before.top + (e.pageY - propeties.draggable.before.y);
+            propeties.draggable.x = propeties.draggable.before.left + (e.pageX - propeties.draggable.before.x);
             $myDialog.self
-                .css('top', propeties.draggableElement.y)
-                .css('left', propeties.draggableElement.x)
+                .css('top', propeties.draggable.y)
+                .css('left', propeties.draggable.x)
             ;
-            $myDialog.content.hiddenArea.find('#my_dialog_page_x').val(propeties.draggableElement.x);
-            $myDialog.content.hiddenArea.find('#my_dialog_page_y').val(propeties.draggableElement.y);
+            $myDialog.content.hiddenArea.find('#my_dialog_page_x').val(propeties.draggable.x);
+            $myDialog.content.hiddenArea.find('#my_dialog_page_y').val(propeties.draggable.y);
             return false;
         });
         return false;
@@ -294,7 +294,6 @@ $(function() {
 
     // CSSを適用する
     Object.keys(css).forEach(function(selector) {
-        var $selector = $(selector);
         $(selector).css(css[selector]);
     });
 
