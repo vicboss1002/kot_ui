@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         UserScript_for_king_of_time
 // @namespace    https://raw.githubusercontent.com/vicboss1002/kot_ui/master/UserScript_for_king_of_time.user.js
-// @version      1.4
+// @version      2.0
 // @updateURL    https://raw.githubusercontent.com/vicboss1002/kot_ui/master/UserScript_for_king_of_time.user.js
 // @description  This script will be running on the site of "King of Time".
 // @author       daisuke.f
@@ -165,7 +165,6 @@ $(document).ready(function() {
     ;
 
     $myDialog.content.buttonArea
-        .append('<button id="my_save_button">状態を保存</button>')
         .append('<button id="my_schedule_enter_button">スケジュール入力</button>')
     ;
 
@@ -230,12 +229,10 @@ $(document).ready(function() {
         $myDialog.self.toggle();
     });
 
-    // [入力を保存]ボタンの動作
+    // <input>タグの値変更時の処理
     // セッションストレージに値を保存
-    $myDialog.content.buttonArea.find('#my_save_button').click(function() {
-        $myDialog.self.find(':input').each(function() {
-            sessionStorage.setItem($(this).attr('id'), $(this).val());
-        });
+    $myDialog.content.find(':input').change( function(e) {
+        sessionStorage.setItem($(this).attr('id'), $(this).val());
     });
 
     // チェックボックスをクリック時の処理
