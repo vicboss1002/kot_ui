@@ -1,11 +1,12 @@
 // ==UserScript==
 // @name         UserScript_for_king_of_time
 // @namespace    https://raw.githubusercontent.com/vicboss1002/kot_ui/master/UserScript_for_king_of_time.user.js
-// @version      2.0
+// @version      2.1.0
 // @updateURL    https://raw.githubusercontent.com/vicboss1002/kot_ui/master/UserScript_for_king_of_time.user.js
 // @description  This script will be running on the site of "King of Time".
 // @author       daisuke.f
 // @include      https://s3.kingtime.jp/admin/*
+// @exclude      https://s3.kingtime.jp/admin/
 // @exclude      https://s3.kingtime.jp/admin/*?page_id=/employee/request_list*
 // @exclude      https://s3.kingtime.jp/admin/*?page_id=/employee/change_password*
 // @exclude      https://s3.kingtime.jp/admin/*?page_id=/schedule/schedule_pattern_list_for_employee*
@@ -126,12 +127,13 @@ $(document).ready(function() {
 
     $myDialog.self
         .append('<div id="my_dialog_header"></div>')
-        .append('<div id="my_dialog_content"></div>')
+        .append('<div id="my_dialog_content"><form id="my_dialog_content_form"></form></div>')
     ;
 
     $myDialog.header = $myDialog.self.find('#my_dialog_header');
     $myDialog.content = $myDialog.self.find('#my_dialog_content');
-    $myDialog.content
+    $myDialog.content.form = $myDialog.self.find('#my_dialog_content_form')
+    $myDialog.content.form
         .append('<div id="my_dialog_input_area"></div>')
         .append('<div id="my_dialog_checkbox_area"></div>')
         .append('<div id="my_dialog_button_area"></div>')
@@ -165,7 +167,8 @@ $(document).ready(function() {
     ;
 
     $myDialog.content.buttonArea
-        .append('<button id="my_schedule_enter_button">スケジュール入力</button>')
+        .append('<button type="reset">リセット</button>')
+        .append('<button type="button" id="my_schedule_enter_button">スケジュール入力</button>')
     ;
 
     $myDialog.content.hiddenArea
@@ -231,8 +234,13 @@ $(document).ready(function() {
 
     // <input>タグの値変更時の処理
     // セッションストレージに値を保存
-    $myDialog.content.find(':input').change( function(e) {
+    $myDialog.content.find(':input').live('change', function(e) {
+        if (!$(this).prop('id')) return false;
         sessionStorage.setItem($(this).attr('id'), $(this).val());
+    });
+    
+    $myDialog.self.find(':input[type=reset]').live('click', function(e) {
+        sessionStorage.clear();
     });
 
     // チェックボックスをクリック時の処理
@@ -247,6 +255,7 @@ $(document).ready(function() {
 
     // [スケジュール入力]ボタン動作
     $myDialog.content.buttonArea.find('#my_schedule_enter_button').click(function() {
+        if ($('#select_schedule_pattern_id').size() !== 1) return false;
         var schedule_pattern = $('#my_dialog_schedule_pattern').val();
         $('#select_schedule_pattern_id > option').each(function() {
             if($(this).text() === schedule_pattern) {
@@ -258,7 +267,6 @@ $(document).ready(function() {
         var startTimeHour = $('#my_start_time_hour').val(), startTimeMinute = $('#my_start_time_minute').val();
         var endTimeHour = $('#my_end_time_hour').val(), endTimeMinute = $('#my_end_time_minute').val();
         var restTime = $('#my_rest_time').val();
-        console.log(restTime);
         $('#schedule_start_time_hour').val(startTimeHour);
         $('#schedule_start_time_minute').val(startTimeMinute);
         $('#schedule_end_time_hour').val(endTimeHour);
@@ -268,6 +276,10 @@ $(document).ready(function() {
 
 
     //-----終了処理
+    // ダイアログ内の送信処理は中断
+    $myDialog.self.find('form').submit(function(e) {
+        return confirm('拡張ダイアログ内で送信処理が検出されました。\n続行しますか？');
+    });
     // チェックボックスの状態反映
     $myDialog.self.find('input[type=checkbox]').each(function() {
         var checked = $(this).val().toLowerCase() === 'true';
