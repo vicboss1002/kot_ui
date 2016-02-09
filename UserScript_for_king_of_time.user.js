@@ -1,8 +1,10 @@
 // ==UserScript==
 // @name         UserScript_for_king_of_time
 // @namespace    https://raw.githubusercontent.com/vicboss1002/kot_ui/master/UserScript_for_king_of_time.user.js
-// @version      2.1.0
+// @version      2.2.0
 // @updateURL    https://raw.githubusercontent.com/vicboss1002/kot_ui/master/UserScript_for_king_of_time.user.js
+// @downloadURL  https://raw.githubusercontent.com/vicboss1002/kot_ui/master/UserScript_for_king_of_time.user.js
+// @supportURL   https://github.com/vicboss1002/kot_ui/issues
 // @description  This script will be running on the site of "King of Time".
 // @author       daisuke.f
 // @include      https://s3.kingtime.jp/admin/*
@@ -29,15 +31,20 @@ $(document).ready(function() {
             'font-size': '0.2em',
             'background-color': 'DarkBlue',
             'color': 'white',
-            'border': 'outset 2px DarkBlue',
+            'border': 'outset 3px MediumBlue',
             'border-radius': '5px',
             'padding': '0.5em',
-            'box-shadow': '1px 1px 5px 2px gray'
+        },
+        '#my_view_button:hover': {
+            'background-color': 'gray',
+            'border-color': 'gray',
+            'border-style': 'inset'
         },
         '#my_dialog *': {
             'margin': 0,
             'padding': 0,
             'font-family': 'メイリオ',
+            'vertical-align': 'middle'
         },
         '#my_dialog': {
             'background': 'white',
@@ -55,7 +62,7 @@ $(document).ready(function() {
         '#my_dialog input, #my_dialog select': {
             'background': 'white',
             'border': 'inset 1px silver',
-            'margin': '0 0.5em'
+            'margin': '0.1em'
         },
         '#my_dialog_header': {
             'text-align': 'center',
@@ -64,7 +71,6 @@ $(document).ready(function() {
             'background': 'navy',
             'color': 'white',
             'padding': '0.5em',
-            'box-shadow': '2px 2xp 2xp 2xp gray'
         },
         '#my_dialog_content': {
             'margin': '0.5em'
@@ -106,8 +112,8 @@ $(document).ready(function() {
         },
         '#my_dialog_close': {
             'position': 'absolute',
-            'top': 5,
-            'right': 3,
+            'top': '2px',
+            'right': '3px',
             'padding': '0 3px',
             'background': 'none',
             'color': 'white',
@@ -120,6 +126,7 @@ $(document).ready(function() {
     $('#menu_container').append('<button id="my_view_button">拡張ダイアログ表示</button>');
 
     // 入力補助ツールダイアログ生成
+    $('head').append('<style id="my_dialog_style"></style>');
     $('body').append('<div id="my_dialog"></div>');
     var $myDialog = {
         self: $(document).find('#my_dialog'),
@@ -132,7 +139,7 @@ $(document).ready(function() {
 
     $myDialog.header = $myDialog.self.find('#my_dialog_header');
     $myDialog.content = $myDialog.self.find('#my_dialog_content');
-    $myDialog.content.form = $myDialog.self.find('#my_dialog_content_form')
+    $myDialog.content.form = $myDialog.self.find('#my_dialog_content_form');
     $myDialog.content.form
         .append('<div id="my_dialog_input_area"></div>')
         .append('<div id="my_dialog_checkbox_area"></div>')
@@ -152,9 +159,9 @@ $(document).ready(function() {
 
     $myDialog.content.inputArea
         .append('<div><label for="my_dialog_schedule_pattern" class="my_dialog_labels">スケジュールパターン</label><div class="my_dialog_inputs"><select id="my_dialog_schedule_pattern"></select></div></div>')
-        .append('<div><label for="my_start_time_hour my_start_time_minute" class="my_dialog_labels">出勤予定</label><div class="my_dialog_inputs"><input type="number" id="my_start_time_hour"></input>：<input type="number" id="my_start_time_minute"></input></div></div>')
-        .append('<div><label for="my_end_time_hour my_end_time_minute" class="my_dialog_labels">退勤予定</label><div  class="my_dialog_inputs"><input type="number" id="my_end_time_hour"></input>：<input type="number" id="my_end_time_minute"></input></div></div>')
-        .append('<div><label for="my_rest_time" class="my_dialog_labels">休憩予定時間</label><div class="my_dialog_inputs"><input type="number" id="my_rest_time"></input>分</div></div>')
+        .append('<div><label for="my_start_time_hour my_start_time_minute" class="my_dialog_labels">出勤予定</label><div class="my_dialog_inputs"><input type="number" id="my_start_time_hour" />：<input type="number" id="my_start_time_minute" /></div></div>')
+        .append('<div><label for="my_end_time_hour my_end_time_minute" class="my_dialog_labels">退勤予定</label><div  class="my_dialog_inputs"><input type="number" id="my_end_time_hour" />：<input type="number" id="my_end_time_minute" /></div></div>')
+        .append('<div><label for="my_rest_time" class="my_dialog_labels">休憩予定時間</label><div class="my_dialog_inputs"><input type="number" id="my_rest_time">分</div></div>')
     ;
     $myDialog.content.inputArea.find('#my_dialog_schedule_pattern')
         .append('<option value="常駐">常駐</option>')
@@ -162,8 +169,8 @@ $(document).ready(function() {
     ;
 
     $myDialog.content.checkboxArea
-        .append('<div class="my_dialog_checkboxes"><label for="my_dialog_anytime_show"><input type="checkbox" id="my_dialog_anytime_hidden" value="false"></input>画面遷移時に非表示する</label></div>')
-        .append('<div class="my_dialog_checkboxes"><label for="my_dialog_auto_input"><input type="checkbox" id="my_dialog_auto_input" value="false"></input>画面遷移時に自動入力する</label></div>')
+        .append('<div class="my_dialog_checkboxes"><label for="my_dialog_anytime_hidden"><input type="checkbox" id="my_dialog_anytime_hidden" value="false" />画面遷移時に非表示する</label></div>')
+        .append('<div class="my_dialog_checkboxes"><label for="my_dialog_auto_input"><input type="checkbox" id="my_dialog_auto_input" value="false" />画面遷移時に自動入力する</label></div>')
     ;
 
     $myDialog.content.buttonArea
@@ -172,8 +179,8 @@ $(document).ready(function() {
     ;
 
     $myDialog.content.hiddenArea
-        .append('<input id="my_dialog_page_x" type="hidden" value="0"></input>')
-        .append('<input id="my_dialog_page_y" type="hidden" value="0"></input>')
+        .append('<input id="my_dialog_page_x" type="hidden" value="0" />')
+        .append('<input id="my_dialog_page_y" type="hidden" value="0" />')
     ;
 
     // -----初期化
@@ -198,7 +205,7 @@ $(document).ready(function() {
                 y: 0
             }
         }
-    }
+    };
     $myDialog.header.mousedown(function(e) {
         var parsePosition = function(position) {
             return parseInt(position.replace('px', ''));
@@ -208,7 +215,7 @@ $(document).ready(function() {
             y: e.pageY,
             top: parsePosition($myDialog.self.css('top')),
             left: parsePosition($myDialog.self.css('left'))
-        }
+        };
         $('body').live('mousemove.draggable', function(e) {
             propeties.draggable.y = propeties.draggable.before.top + (e.pageY - propeties.draggable.before.y);
             propeties.draggable.x = propeties.draggable.before.left + (e.pageX - propeties.draggable.before.x);
@@ -238,7 +245,7 @@ $(document).ready(function() {
         if (!$(this).prop('id')) return false;
         sessionStorage.setItem($(this).attr('id'), $(this).val());
     });
-    
+
     $myDialog.self.find(':input[type=reset]').live('click', function(e) {
         sessionStorage.clear();
     });
@@ -255,6 +262,8 @@ $(document).ready(function() {
 
     // [スケジュール入力]ボタン動作
     $myDialog.content.buttonArea.find('#my_schedule_enter_button').click(function() {
+        // スケジュール申請ページの判定
+        // 入力対象が見つからなければ処理をスキップする
         if ($('#select_schedule_pattern_id').size() !== 1) return false;
         var schedule_pattern = $('#my_dialog_schedule_pattern').val();
         $('#select_schedule_pattern_id > option').each(function() {
@@ -302,8 +311,14 @@ $(document).ready(function() {
 
 
     // CSSを適用する
+    $myDialogStyle = $('#my_dialog_style');
     Object.keys(css).forEach(function(selector) {
-        $(selector).css(css[selector]);
+        // $(selector).css(css[selector]);
+        $myDialogStyle.append(selector + ' {');
+        Object.keys(css[selector]).forEach(function(property) {
+            $myDialogStyle.append('\t' + property + ': ' + css[selector][property] + ';');
+        });
+        $myDialogStyle.append('}');
     });
 
     // ダイアログの初期ポジション設定
@@ -312,3 +327,4 @@ $(document).ready(function() {
         .css('left', $myDialog.self.find('#my_dialog_page_x').val() + 'px')
     ;
 });
+
