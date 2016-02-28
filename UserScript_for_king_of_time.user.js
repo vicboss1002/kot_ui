@@ -124,64 +124,92 @@ $(document).ready(function() {
     // ----HTML定義
     // 入力補助ツール表示ボタンの生成
     $('#menu_container').append('<button id="my_view_button">拡張ダイアログ表示</button>');
-
-    // 入力補助ツールダイアログ生成
-    $('head').append('<style id="my_dialog_style"></style>');
-    $('body').append('<div id="my_dialog"></div>');
-    var $myDialog = {
-        self: $(document).find('#my_dialog'),
+    // ヒアドキュメントを生成
+    var hereDocumentBuilder = {
+        build: function(name) {
+            return this.documents[name].toString().match(/[^]*\/\*([^]*)\*\/\}$/)[1];
+        },
+        documents: {
+            // 拡張ダイアログのHTMLタグを定義
+            extendedDialog: function() {/*
+                <div id="my_dialog">
+                    <div id="my_dialog_header">
+                        <h2>拡張ダイアログ</h2>
+                        <button id="my_dialog_close" title="閉じる">×</button>
+                    </div><!-- #my_dialog_header -->
+                    <div id="my_dialog_content">
+                        <form id="my_dialog_content_form">
+                            <div id="my_dialog_input_area">
+                                <div>
+                                    <label for="my_dialog_schedule_pattern" class="my_dialog_labels">スケジュールパターン</label>
+                                    <div class="my_dialog_inputs">
+                                        <select id="my_dialog_schedule_pattern">
+                                            <option value="常駐">常駐</option>
+                                            <option value="休出">休出</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label for="my_start_time_hour my_start_time_minute" class="my_dialog_labels">出勤予定</label>
+                                    <div class="my_dialog_inputs">
+                                        <input type="number" id="my_start_time_hour" />：<input type="number" id="my_start_time_minute" />
+                                    </div>
+                                </div>
+                                <div>
+                                    <label for="my_end_time_hour my_end_time_minute" class="my_dialog_labels">退勤予定</label>
+                                    <div  class="my_dialog_inputs">
+                                        <input type="number" id="my_end_time_hour" />：<input type="number" id="my_end_time_minute" />
+                                    </div>
+                                </div>
+                                <div>
+                                    <label for="my_rest_time" class="my_dialog_labels">休憩予定時間</label>
+                                    <div class="my_dialog_inputs">
+                                        <input type="number" id="my_rest_time">分
+                                    </div>
+                                </div>
+                            </div><!-- #my_dialog_input_area -->
+                            <div id="my_dialog_checkbox_area">
+                                <div class="my_dialog_checkboxes">
+                                    <label for="my_dialog_anytime_hidden">
+                                        <input type="checkbox" id="my_dialog_anytime_hidden" value="false" />画面遷移時に非表示する
+                                    </label>
+                                </div>
+                                <div class="my_dialog_checkboxes">
+                                    <label for="my_dialog_auto_input">
+                                        <input type="checkbox" id="my_dialog_auto_input" value="false" />画面遷移時に自動入力する
+                                    </label>
+                                </div>
+                            </div><!-- #my_dialog_checkbox_area -->
+                            <div id="my_dialog_button_area">
+                                <button type="reset">リセット</button>
+                                <button type="button" id="my_schedule_enter_button">スケジュール入力</button>
+                            </div><!-- #my_dialog_button_area -->
+                            <div id="my_dialog_hidden_area">
+                                <input id="my_dialog_page_x" type="hidden" value="0" />
+                                <input id="my_dialog_page_y" type="hidden" value="0" />
+                            </div><!-- #my_dialog_hidden_area -->
+                        </form>
+                    </div><!-- #my_dialog_content -->
+                </div><!-- #my_dialog -->
+            */}
+        }
     };
-
-    $myDialog.self
-        .append('<div id="my_dialog_header"></div>')
-        .append('<div id="my_dialog_content"><form id="my_dialog_content_form"></form></div>')
-    ;
+    // <style>タグを追加
+    $('head').append('<style id="my_dialog_style"></style>');
+    // 拡張ダイアログを追加
+    $('body').append(hereDocumentBuilder.build('extendedDialog'));
+    var $myDialog = {
+        self: $(document).find('#my_dialog')
+    };
 
     $myDialog.header = $myDialog.self.find('#my_dialog_header');
     $myDialog.content = $myDialog.self.find('#my_dialog_content');
     $myDialog.content.form = $myDialog.self.find('#my_dialog_content_form');
-    $myDialog.content.form
-        .append('<div id="my_dialog_input_area"></div>')
-        .append('<div id="my_dialog_checkbox_area"></div>')
-        .append('<div id="my_dialog_button_area"></div>')
-        .append('<div id="my_dialog_hidden_area"></div>')
-    ;
     $myDialog.content.inputArea = $myDialog.content.find('#my_dialog_input_area');
     $myDialog.content.checkboxArea = $myDialog.content.find('#my_dialog_checkbox_area');
     $myDialog.content.buttonArea = $myDialog.content.find('#my_dialog_button_area');
     $myDialog.content.hiddenArea = $myDialog.content.find('#my_dialog_hidden_area');
-
-
-    $myDialog.header
-        .append('<h2>拡張ダイアログ</h2>')
-        .append('<button id="my_dialog_close" title="閉じる">×</button>')
-    ;
-
-    $myDialog.content.inputArea
-        .append('<div><label for="my_dialog_schedule_pattern" class="my_dialog_labels">スケジュールパターン</label><div class="my_dialog_inputs"><select id="my_dialog_schedule_pattern"></select></div></div>')
-        .append('<div><label for="my_start_time_hour my_start_time_minute" class="my_dialog_labels">出勤予定</label><div class="my_dialog_inputs"><input type="number" id="my_start_time_hour" />：<input type="number" id="my_start_time_minute" /></div></div>')
-        .append('<div><label for="my_end_time_hour my_end_time_minute" class="my_dialog_labels">退勤予定</label><div  class="my_dialog_inputs"><input type="number" id="my_end_time_hour" />：<input type="number" id="my_end_time_minute" /></div></div>')
-        .append('<div><label for="my_rest_time" class="my_dialog_labels">休憩予定時間</label><div class="my_dialog_inputs"><input type="number" id="my_rest_time">分</div></div>')
-    ;
-    $myDialog.content.inputArea.find('#my_dialog_schedule_pattern')
-        .append('<option value="常駐">常駐</option>')
-        .append('<option value="休出">休出</option>')
-    ;
-
-    $myDialog.content.checkboxArea
-        .append('<div class="my_dialog_checkboxes"><label for="my_dialog_anytime_hidden"><input type="checkbox" id="my_dialog_anytime_hidden" value="false" />画面遷移時に非表示する</label></div>')
-        .append('<div class="my_dialog_checkboxes"><label for="my_dialog_auto_input"><input type="checkbox" id="my_dialog_auto_input" value="false" />画面遷移時に自動入力する</label></div>')
-    ;
-
-    $myDialog.content.buttonArea
-        .append('<button type="reset">リセット</button>')
-        .append('<button type="button" id="my_schedule_enter_button">スケジュール入力</button>')
-    ;
-
-    $myDialog.content.hiddenArea
-        .append('<input id="my_dialog_page_x" type="hidden" value="0" />')
-        .append('<input id="my_dialog_page_y" type="hidden" value="0" />')
-    ;
+    $myDialog.content.inputArea.find('#my_dialog_schedule_pattern');
 
     // -----初期化
     // セッションストレージから値を取得
@@ -241,7 +269,7 @@ $(document).ready(function() {
 
     // <input>タグの値変更時の処理
     // セッションストレージに値を保存
-    $myDialog.content.find(':input').live('change', function(e) {
+    $myDialog.self.find(':input').live('change', function(e) {
         if (!$(this).prop('id')) return false;
         sessionStorage.setItem($(this).attr('id'), $(this).val());
     });
@@ -313,7 +341,6 @@ $(document).ready(function() {
     // CSSを適用する
     $myDialogStyle = $('#my_dialog_style');
     Object.keys(css).forEach(function(selector) {
-        // $(selector).css(css[selector]);
         $myDialogStyle.append(selector + ' {');
         Object.keys(css[selector]).forEach(function(property) {
             $myDialogStyle.append('\t' + property + ': ' + css[selector][property] + ';');
