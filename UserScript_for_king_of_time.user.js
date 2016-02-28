@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         UserScript_for_king_of_time
 // @namespace    https://raw.githubusercontent.com/vicboss1002/kot_ui/master/UserScript_for_king_of_time.user.js
-// @version      2.2.1
+// @version      2.2.2
 // @updateURL    https://raw.githubusercontent.com/vicboss1002/kot_ui/master/UserScript_for_king_of_time.user.js
 // @downloadURL  https://raw.githubusercontent.com/vicboss1002/kot_ui/master/UserScript_for_king_of_time.user.js
 // @supportURL   https://github.com/vicboss1002/kot_ui/issues
@@ -25,102 +25,6 @@
 // 　4.終了処理
 $(document).ready(function() {
     // -----定義
-    // CSSを定義
-    var css = {
-        '#my_view_button': {
-            'font-size': '0.2em',
-            'background-color': 'DarkBlue',
-            'color': 'white',
-            'border': 'outset 3px MediumBlue',
-            'border-radius': '5px',
-            'padding': '0.5em',
-        },
-        '#my_view_button:hover': {
-            'background-color': 'gray',
-            'border-color': 'gray',
-            'border-style': 'inset'
-        },
-        '#my_dialog *': {
-            'margin': 0,
-            'padding': 0,
-            'font-family': 'メイリオ',
-            'vertical-align': 'middle'
-        },
-        '#my_dialog': {
-            'background': 'white',
-            'position': 'fixed',
-            'top': 0,
-            'left': 0,
-            'border': 'ridge 2px navy',
-            'box-shadow': '2px 2px 10px 4px gray',
-            'border-radius': '0.5em',
-            'z-index': '99'
-        },
-        '#my_dialog h2': {
-            'font-size': '1em'
-        },
-        '#my_dialog input, #my_dialog select': {
-            'background': 'white',
-            'border': 'inset 1px silver',
-            'margin': '0.1em'
-        },
-        '#my_dialog_header': {
-            'text-align': 'center',
-            'font-size': '0.8em',
-            'font-weight': 'bold',
-            'background': 'navy',
-            'color': 'white',
-            'padding': '0.5em',
-        },
-        '#my_dialog_content': {
-            'margin': '0.5em'
-        },
-        '.my_dialog_labels, .my_dialog_inputs': {
-            'width': '150px',
-            'padding': '0 5px',
-            'float': 'left',
-            'white-space': 'nowrap'
-        },
-        '.my_dialog_labels': {
-            'text-align': 'center',
-        },
-        '.my_dialog_checkboxes': {
-            'vertical-align': 'middle'
-        },
-        '#my_dialog_checkbox_area': {
-            'padding': '0 2%',
-            'clear': 'both'
-        },
-        '#my_dialog_button_area': {
-            'margin': '0 0 0.5em 0',
-            'text-align': 'center'
-        },
-        '#my_dialog input': {
-            'width': '50px'
-        },
-        '#my_dialog_input_area input[type=number]': {
-            'text-aligin': 'right'
-        },
-        '#my_dialog label': {
-            'display': 'block',
-            'padding': '0.2em 1em',
-            'background': 'white',
-            'border': 'none'
-        },
-        '#my_dialog button': {
-            'padding': '0.5em',
-        },
-        '#my_dialog_close': {
-            'position': 'absolute',
-            'top': '2px',
-            'right': '3px',
-            'padding': '0 3px',
-            'background': 'none',
-            'color': 'white',
-            'border': 'none'
-        }
-    };
-
     // ----HTML定義
     // 入力補助ツール表示ボタンの生成
     $('#menu_container').append('<button id="my_view_button">拡張ダイアログ表示</button>');
@@ -191,11 +95,108 @@ $(document).ready(function() {
                         </form>
                     </div><!-- #my_dialog_content -->
                 </div><!-- #my_dialog -->
+            */},
+            // CSSを定義
+            style: function() {/*
+                <style id="my_dialog_style">
+                    #my_view_button {
+                        font-size: 0.2em;
+                        background-color: DarkBlue;
+                        color: white;
+                        border: outset 3px MediumBlue;
+                        border-radius: 5px;
+                        padding: 0.5em;
+                    }
+                    #my_view_button:hover {
+                        background-color: gray;
+                        border-color: gray;
+                        border-style: inset
+                    }
+                    #my_dialog * {
+                        margin: 0;
+                        padding: 0;
+                        font-family: メイリオ;
+                        vertical-align: middle
+                    }
+                    #my_dialog {
+                        background: white;
+                        position: fixed;
+                        top: 0;
+                        left: 0;
+                        border: ridge 2px navy;
+                        box-shadow: 2px 2px 10px 4px gray;
+                        border-radius: 0.5em;
+                        z-index: 99
+                    }
+                    #my_dialog h2 {
+                        font-size: 1em
+                    }
+                    #my_dialog input, #my_dialog select {
+                        background: white;
+                        border: inset 1px silver;
+                        margin: 0.1em
+                    }
+                    #my_dialog_header {
+                        text-align: center;
+                        font-size: 0.8em;
+                        font-weight: bold;
+                        background: navy;
+                        color: white;
+                        padding: 0.5em;
+                    }
+                    #my_dialog_content {
+                        margin: 0.5em
+                    }
+                    .my_dialog_labels, .my_dialog_inputs {
+                        width: 150px;
+                        padding: 0 5px;
+                        float: left;
+                        white-space: nowrap
+                    }
+                    .my_dialog_labels {
+                        text-align: center;
+                    }
+                    .my_dialog_checkboxes {
+                        vertical-align: middle
+                    }
+                    #my_dialog_checkbox_area {
+                        padding: 0 2%;
+                        clear: both
+                    }
+                    #my_dialog_button_area {
+                        margin: 0 0 0.5em 0;
+                        text-align: center
+                    }
+                    #my_dialog input {
+                        width: 50px
+                    }
+                    #my_dialog_input_area input[type=number] {
+                        text-aligin: right
+                    }
+                    #my_dialog label {
+                        display: block;
+                        padding: 0.2em 1em;
+                        background: white;
+                        border: none
+                    }
+                    #my_dialog button {
+                        padding: 0.5em;
+                    }
+                    #my_dialog_close {
+                        position: absolute;
+                        top: 2px;
+                        right: 3px;
+                        padding: 0 3px;
+                        background: none;
+                        color: white;
+                        border: none
+                    }
+                </style>
             */}
         }
     };
     // <style>タグを追加
-    $('head').append('<style id="my_dialog_style"></style>');
+    $('head').append(hereDocumentBuilder.build('style'));
     // 拡張ダイアログを追加
     $('body').append(hereDocumentBuilder.build('extendedDialog'));
     var $myDialog = {
@@ -337,21 +338,9 @@ $(document).ready(function() {
         $myDialog.self.find('#my_schedule_enter_button').click();
     }
 
-
-    // CSSを適用する
-    $myDialogStyle = $('#my_dialog_style');
-    Object.keys(css).forEach(function(selector) {
-        $myDialogStyle.append(selector + ' {');
-        Object.keys(css[selector]).forEach(function(property) {
-            $myDialogStyle.append('\t' + property + ': ' + css[selector][property] + ';');
-        });
-        $myDialogStyle.append('}');
-    });
-
     // ダイアログの初期ポジション設定
     $myDialog.self
         .css('top', $myDialog.self.find('#my_dialog_page_y').val() + 'px')
         .css('left', $myDialog.self.find('#my_dialog_page_x').val() + 'px')
     ;
 });
-
