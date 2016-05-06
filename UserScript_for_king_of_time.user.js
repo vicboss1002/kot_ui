@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         UserScript_for_king_of_time
 // @namespace    https://raw.githubusercontent.com/vicboss1002/kot_ui/master/UserScript_for_king_of_time.user.js
-// @version      2.2.2
+// @version      3.0.0
 // @updateURL    https://raw.githubusercontent.com/vicboss1002/kot_ui/master/UserScript_for_king_of_time.user.js
 // @downloadURL  https://raw.githubusercontent.com/vicboss1002/kot_ui/master/UserScript_for_king_of_time.user.js
 // @supportURL   https://github.com/vicboss1002/kot_ui/issues
@@ -12,7 +12,7 @@
 // @exclude      https://s3.kingtime.jp/admin/*?page_id=/employee/request_list*
 // @exclude      https://s3.kingtime.jp/admin/*?page_id=/employee/change_password*
 // @exclude      https://s3.kingtime.jp/admin/*?page_id=/schedule/schedule_pattern_list_for_employee*
-// @required     https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js
+// @required     https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js
 // @grant        GM_addStyle
 // @grant        GM_getResourceText
 // ==/UserScript==
@@ -26,117 +26,121 @@
 $(document).ready(function() {
     // -----定義
     // ----HTML定義
-    // 入力補助ツール表示ボタンの生成
-    $('#menu_container').append('<button id="my_view_button">拡張ダイアログ表示</button>');
+
     // ヒアドキュメントを生成
     var hereDocumentBuilder = {
         build: function(name) {
-            return this.documents[name].toString().match(/[^]*\/\*([^]*)\*\/\}$/)[1];
+            var target = this.documents[name];
+            return target? target.toString().match(/[^]*\/\*([^]*)\*\/\}$/)[1]: "";
         },
         documents: {
-            // 拡張ダイアログのHTMLタグを定義
-            extendedDialog: function() {/*
-                <div id="my_dialog">
-                    <div id="my_dialog_header">
-                        <h2>拡張ダイアログ</h2>
-                        <button id="my_dialog_close" title="閉じる">×</button>
-                    </div><!-- #my_dialog_header -->
-                    <div id="my_dialog_content">
-                        <form id="my_dialog_content_form">
-                            <div id="my_dialog_input_area">
-                                <div>
-                                    <label for="my_dialog_schedule_pattern" class="my_dialog_labels">スケジュールパターン</label>
-                                    <div class="my_dialog_inputs">
-                                        <select id="my_dialog_schedule_pattern">
-                                            <option value="常駐">常駐</option>
-                                            <option value="休出">休出</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div>
-                                    <label for="my_start_time_hour my_start_time_minute" class="my_dialog_labels">出勤予定</label>
-                                    <div class="my_dialog_inputs">
-                                        <input type="number" id="my_start_time_hour" />：<input type="number" id="my_start_time_minute" />
-                                    </div>
-                                </div>
-                                <div>
-                                    <label for="my_end_time_hour my_end_time_minute" class="my_dialog_labels">退勤予定</label>
-                                    <div  class="my_dialog_inputs">
-                                        <input type="number" id="my_end_time_hour" />：<input type="number" id="my_end_time_minute" />
-                                    </div>
-                                </div>
-                                <div>
-                                    <label for="my_rest_time" class="my_dialog_labels">休憩予定時間</label>
-                                    <div class="my_dialog_inputs">
-                                        <input type="number" id="my_rest_time">分
-                                    </div>
-                                </div>
-                            </div><!-- #my_dialog_input_area -->
-                            <div id="my_dialog_checkbox_area">
-                                <div class="my_dialog_checkboxes">
-                                    <label for="my_dialog_anytime_hidden">
-                                        <input type="checkbox" id="my_dialog_anytime_hidden" value="false" />画面遷移時に非表示する
-                                    </label>
-                                </div>
-                                <div class="my_dialog_checkboxes">
-                                    <label for="my_dialog_auto_input">
-                                        <input type="checkbox" id="my_dialog_auto_input" value="false" />画面遷移時に自動入力する
-                                    </label>
-                                </div>
-                            </div><!-- #my_dialog_checkbox_area -->
-                            <div id="my_dialog_button_area">
-                                <button type="reset">リセット</button>
-                                <button type="button" id="my_schedule_enter_button">スケジュール入力</button>
-                            </div><!-- #my_dialog_button_area -->
-                            <div id="my_dialog_hidden_area">
-                                <input id="my_dialog_page_x" type="hidden" value="0" />
-                                <input id="my_dialog_page_y" type="hidden" value="0" />
-                            </div><!-- #my_dialog_hidden_area -->
-                        </form>
-                    </div><!-- #my_dialog_content -->
-                </div><!-- #my_dialog -->
+            // 拡張ツールボックスのボタンのタグ
+            viewButton: function() {/*
+                <button id="my_view_button">拡張<br />ツールボックス<br />表示</button>
             */},
-            // CSSを定義
+            // 拡張ツールボックスのタグ
+            extendedToolBox: function() {/*
+                <div id="extended_tool_box_wrapper">
+                    <div id="extended_tool_box">
+                        <div id="extended_tool_box_content">
+                            <form id="extended_tool_box_content_form">
+                                <div id="extended_tool_box_input_area">
+                                    <div>
+                                        <label for="extended_tool_box_schedule_pattern" class="extended_tool_box_labels">スケジュールパターン</label>
+                                        <div class="extended_tool_box_inputs">
+                                            <select id="extended_tool_box_schedule_pattern">
+                                                <option value="常駐">常駐</option>
+                                                <option value="休出">休出</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label for="my_start_time_hour my_start_time_minute" class="extended_tool_box_labels">出勤予定</label>
+                                        <div class="extended_tool_box_inputs">
+                                            <input type="number" id="my_start_time_hour" />時<input type="number" id="my_start_time_minute" />分
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label for="my_end_time_hour my_end_time_minute" class="extended_tool_box_labels">退勤予定</label>
+                                        <div  class="extended_tool_box_inputs">
+                                            <input type="number" id="my_end_time_hour" />時<input type="number" id="my_end_time_minute" />分
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label for="my_rest_time" class="extended_tool_box_labels">休憩予定時間</label>
+                                        <div class="extended_tool_box_inputs">
+                                            <input type="number" id="my_rest_time">分
+                                        </div>
+                                    </div>
+                                </div><!-- #extended_tool_box_input_area -->
+                                <div id="extended_tool_box_checkbox_area">
+                                    <div class="extended_tool_box_checkboxes">
+                                        <label for="extended_tool_box_anytime_show" title="この拡張ツールボックスを常に表示状態とします。">
+                                            <input type="checkbox" id="extended_tool_box_anytime_show" value="false" />常に表示する
+                                        </label>
+                                    </div>
+                                    <div class="extended_tool_box_checkboxes">
+                                        <label for="extended_tool_box_auto_input" title="スケジュール申請画面が入力値と同期されます。">
+                                            <input type="checkbox" id="extended_tool_box_auto_input" value="false" />スケジュール入力値を同期する
+                                        </label>
+                                    </div>
+                                </div><!-- #extended_tool_box_checkbox_area -->
+                                <div id="extended_tool_box_button_area">
+                                    <button type="reset">リセット</button>
+                                    <button type="button" id="my_schedule_enter_button">スケジュール入力</button>
+                                </div><!-- #extended_tool_box_button_area -->
+                            </form>
+                        </div><!-- #extended_tool_box_content -->
+                    </div><!-- #extended_tool_box -->
+                </div>
+            */},
+            // CSSのタグ
             style: function() {/*
                 <style id="my_dialog_style">
-                    #my_view_button {
-                        font-size: 0.2em;
-                        background-color: DarkBlue;
-                        color: white;
-                        border: outset 3px MediumBlue;
-                        border-radius: 5px;
-                        padding: 0.5em;
-                    }
-                    #my_view_button:hover {
-                        background-color: gray;
-                        border-color: gray;
-                        border-style: inset
-                    }
-                    #my_dialog * {
+                    #extended_tool_box_wrapper * {
                         margin: 0;
                         padding: 0;
                         font-family: メイリオ;
                         vertical-align: middle
+                        text-decoration: none;
+                        font-size: 9pt;
                     }
-                    #my_dialog {
+                    #extended_tool_box_wrapper {
                         background: white;
-                        position: fixed;
-                        top: 0;
-                        left: 0;
-                        border: ridge 2px navy;
-                        box-shadow: 2px 2px 10px 4px gray;
-                        border-radius: 0.5em;
-                        z-index: 99
+                        width: 300px;
                     }
-                    #my_dialog h2 {
+                    #extended_tool_box {
+                      position: fixed;
+                      top: 0;
+                      width: 300px;
+                      box-shadow: 5px 0px 5px 2px silver;
+                      z-index: 9999;
+                      height: 100%;
+                    }
+
+                    #my_view_button {
+                        font-size: 0.2em;
+                        background-color: DarkBlue;
+                        color: white;
+                        border-radius: 50% 50%;
+                        box-shadow: 2px 2px 4px 2px silver;
+                        padding: 1em;
+                        font-family: メイリオ;
+                        transition: 0.1s;
+                    }
+                    #my_view_button:hover {
+                        background-color: gray;
+                        transform: rotate(20deg);
+                    }
+                    #extended_tool_box h2 {
                         font-size: 1em
                     }
-                    #my_dialog input, #my_dialog select {
+                    #extended_tool_box input, #extended_tool_box select {
                         background: white;
                         border: inset 1px silver;
                         margin: 0.1em
                     }
-                    #my_dialog_header {
+                    #extended_tool_box_header {
                         text-align: center;
                         font-size: 0.8em;
                         font-weight: bold;
@@ -144,7 +148,7 @@ $(document).ready(function() {
                         color: white;
                         padding: 0.5em;
                     }
-                    #my_dialog_content {
+                    #extended_tool_box_content {
                         margin: 0.5em
                     }
                     .my_dialog_labels, .my_dialog_inputs {
@@ -159,30 +163,36 @@ $(document).ready(function() {
                     .my_dialog_checkboxes {
                         vertical-align: middle
                     }
-                    #my_dialog_checkbox_area {
+                    #extended_tool_box_checkbox_area {
                         padding: 0 2%;
                         clear: both
                     }
-                    #my_dialog_button_area {
+                    #extended_tool_box_button_area {
                         margin: 0 0 0.5em 0;
                         text-align: center
                     }
-                    #my_dialog input {
+                    #extended_tool_box input:not([type=checkbox]) {
                         width: 50px
                     }
-                    #my_dialog_input_area input[type=number] {
+                    #extended_tool_box_input_area input[type=number] {
                         text-aligin: right
                     }
-                    #my_dialog label {
-                        display: block;
-                        padding: 0.2em 1em;
+                    #extended_tool_box label {
                         background: white;
-                        border: none
+                        display: block;
+                        border: none;
                     }
-                    #my_dialog button {
-                        padding: 0.5em;
+                    #extended_tool_box_input_area div {
+                        margin-bottom: 0.5em;
                     }
-                    #my_dialog_close {
+                    #extended_tool_box_input_area label {
+                        border-bottom: 1px solid gray;
+                        margin-bottom: 0.5em;                        
+                    }
+                    #extended_tool_box button {
+                        padding: 0.5em 2em;
+                    }
+                    #extended_tool_box_close {
                         position: absolute;
                         top: 2px;
                         right: 3px;
@@ -191,112 +201,79 @@ $(document).ready(function() {
                         color: white;
                         border: none
                     }
+                    #extended_tool_box_input_area, 
+                    #extended_tool_box_checkbox_area,
+                    #extended_tool_box_button_area {
+                        margin-bottom: 1em;
+                    }
                 </style>
             */}
         }
     };
-    // <style>タグを追加
+    // CSSを定義
     $('head').append(hereDocumentBuilder.build('style'));
-    // 拡張ダイアログを追加
-    $('body').append(hereDocumentBuilder.build('extendedDialog'));
-    var $myDialog = {
-        self: $(document).find('#my_dialog')
+    // 拡張ツールボックスボタンを生成
+    $('#menu_container').append(hereDocumentBuilder.build('viewButton'));
+    // 拡張ツールボックスの定義
+    $('body > table > tbody > tr').prepend(hereDocumentBuilder.build('extendedToolBox'));
+    // 拡張ツールボックスのクローンオブジェクト
+    var $extentedToolBox = {
+        self: $(document).find('#extended_tool_box'),
+        wrapper: $(document).find('#extended_tool_box_wrapper'),
+        content: {
+            self: $(document).find('#extended_tool_box_content'),
+            form: $(document).find('#extended_tool_box_content_form'),
+            inputArea: $(document).find('#extended_tool_box_input_area'),
+            checkboxArea: $(document).find('#extended_tool_box_checkbox_area'),
+            buttonArea: $(document).find('#extended_tool_box_button_area'),
+        },
+        anyTimeShow: $(document).find('#extended_tool_box_anytime_show'),
+        autoInput: $(document).find('#extended_tool_box_auto_input'),
+        schedulePattern: $(document).find('#extended_tool_box_schedule_pattern')
     };
 
-    $myDialog.header = $myDialog.self.find('#my_dialog_header');
-    $myDialog.content = $myDialog.self.find('#my_dialog_content');
-    $myDialog.content.form = $myDialog.self.find('#my_dialog_content_form');
-    $myDialog.content.inputArea = $myDialog.content.find('#my_dialog_input_area');
-    $myDialog.content.checkboxArea = $myDialog.content.find('#my_dialog_checkbox_area');
-    $myDialog.content.buttonArea = $myDialog.content.find('#my_dialog_button_area');
-    $myDialog.content.hiddenArea = $myDialog.content.find('#my_dialog_hidden_area');
-    $myDialog.content.inputArea.find('#my_dialog_schedule_pattern');
-
     // -----初期化
-    // セッションストレージから値を取得
-    $myDialog.self.find(':input').each(function() {
+　　// セッションストレージから値を読み取る
+    $extentedToolBox.self.find(':input').each(function(e) {
         var value = sessionStorage.getItem($(this).attr('id'), $(this).val());
         $(this).val(value);
     });
 
-    // -----イベント登録
-    // ドラッグ移動処理
-    var propeties = {
-        draggable: {
-            before: {
-                x: 0,
-                y: 0,
-                top: 0,
-                left: 0
-            },
-            after: {
-                x: 0,
-                y: 0
-            }
-        }
-    };
-    $myDialog.header.mousedown(function(e) {
-        var parsePosition = function(position) {
-            return parseInt(position.replace('px', ''));
-        };
-        propeties.draggable.before = {
-            x: e.pageX,
-            y: e.pageY,
-            top: parsePosition($myDialog.self.css('top')),
-            left: parsePosition($myDialog.self.css('left'))
-        };
-        $('body').live('mousemove.draggable', function(e) {
-            propeties.draggable.y = propeties.draggable.before.top + (e.pageY - propeties.draggable.before.y);
-            propeties.draggable.x = propeties.draggable.before.left + (e.pageX - propeties.draggable.before.x);
-            $myDialog.self
-                .css('top', propeties.draggable.y)
-                .css('left', propeties.draggable.x)
-            ;
-            $myDialog.content.hiddenArea.find('#my_dialog_page_x').val(propeties.draggable.x);
-            $myDialog.content.hiddenArea.find('#my_dialog_page_y').val(propeties.draggable.y);
-            return false;
-        });
-        return false;
-    });
-    $('body').mouseup(function(e) {
-        $('body').die('mousemove.draggable');
-    });
-
-
-    // [入力補助表示]ボタンの動作
+    // -----イベントハンドラを登録
+    // [拡張ツールボックス表示]ボタンのクリック処理
     $(document).find('#my_view_button').click(function(e) {
-        $myDialog.self.toggle();
+        $extentedToolBox.wrapper.toggle();
     });
 
     // <input>タグの値変更時の処理
     // セッションストレージに値を保存
-    $myDialog.self.find(':input').live('change', function(e) {
+    $extentedToolBox.self.find(':input').live('change', function(e) {
         if (!$(this).prop('id')) return false;
-        sessionStorage.setItem($(this).attr('id'), $(this).val());
+        sessionStorage.setItem($(this).attr('id'), $(this).val()); // セッションストレージに値を保存する
     });
-
-    $myDialog.self.find(':input[type=reset]').live('click', function(e) {
+    // [リセット]ボタン
+    $extentedToolBox.self.find(':input[type=reset]').live('click', function(e) {
         sessionStorage.clear();
     });
 
     // チェックボックスをクリック時の処理
-    $myDialog.self.find('input[type=checkbox]').click(function() {
+    $extentedToolBox.self.find('input[type=checkbox]').click(function() {
         $(this).val($(this).prop('checked'));
     });
 
     // [×]ボタン動作
-    $myDialog.self.find('#my_dialog_close').click(function() {
-        $myDialog.self.hide();
+    $extentedToolBox.self.find('#my_dialog_close').click(function() {
+        $extentedToolBox.self.hide();
     });
 
     // [スケジュール入力]ボタン動作
-    $myDialog.content.buttonArea.find('#my_schedule_enter_button').click(function() {
+    $extentedToolBox.content.buttonArea.find('#my_schedule_enter_button').click(function() {
         // スケジュール申請ページの判定
         // 入力対象が見つからなければ処理をスキップする
         if ($('#select_schedule_pattern_id').size() !== 1) return false;
-        var schedule_pattern = $('#my_dialog_schedule_pattern').val();
-        $('#select_schedule_pattern_id > option').each(function() {
-            if($(this).text() === schedule_pattern) {
+        //var schedule_pattern = $('#my_dialog_schedule_pattern').val();
+        $('#select_schedule_pattern_id > option').each(function(e) {
+            if($(this).text() === $extentedToolBox.schedulePattern.val()) {
                 $(this).attr('selected', true);
             } else {
                 $(this).attr('selected', false);
@@ -315,32 +292,25 @@ $(document).ready(function() {
 
     //-----終了処理
     // ダイアログ内の送信処理は中断
-    $myDialog.self.find('form').submit(function(e) {
+    $extentedToolBox.self.find('form').submit(function(e) {
         return confirm('拡張ダイアログ内で送信処理が検出されました。\n続行しますか？');
     });
     // チェックボックスの状態反映
-    $myDialog.self.find('input[type=checkbox]').each(function() {
+    $extentedToolBox.self.find('input[type=checkbox]').each(function(e) {
         var checked = $(this).val().toLowerCase() === 'true';
         $(this).prop('checked', checked);
     });
 
     // 画面遷移時に表示するチェック時の動作
-    $myDialog.anyTimeHidden = $myDialog.self.find('#my_dialog_anytime_hidden');
-    if ($myDialog.anyTimeHidden.val() === 'true') {
-        $myDialog.self.hide();
+    if ($extentedToolBox.anyTimeShow.prop('checked')) {
+        $extentedToolBox.wrapper.show();
     } else {
-        $myDialog.self.show();
+        $extentedToolBox.wrapper.hide();
     }
 
-    // 画面遷移時に自動入力するチェック時の動作
-    $myDialog.autoInput = $myDialog.self.find('#my_dialog_auto_input');
-    if ($myDialog.autoInput.val() === 'true') {
-        $myDialog.self.find('#my_schedule_enter_button').click();
+    // スケジュール入力値を同期するチェック時の動作
+    if ($extentedToolBox.autoInput.val() === 'true') {
+        $extentedToolBox.self.find('#my_schedule_enter_button').click();
     }
 
-    // ダイアログの初期ポジション設定
-    $myDialog.self
-        .css('top', $myDialog.self.find('#my_dialog_page_y').val() + 'px')
-        .css('left', $myDialog.self.find('#my_dialog_page_x').val() + 'px')
-    ;
 });
