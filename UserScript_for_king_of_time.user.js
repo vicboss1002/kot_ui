@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         UserScript_for_king_of_time
 // @namespace    https://raw.githubusercontent.com/vicboss1002/kot_ui/master/UserScript_for_king_of_time.user.js
-// @version      3.0.1
+// @version      3.0.2
 // @updateURL    https://raw.githubusercontent.com/vicboss1002/kot_ui/master/UserScript_for_king_of_time.user.js
 // @downloadURL  https://raw.githubusercontent.com/vicboss1002/kot_ui/master/UserScript_for_king_of_time.user.js
 // @supportURL   https://github.com/vicboss1002/kot_ui/issues
@@ -184,8 +184,11 @@ $(document).ready(function() {
                         display: block;
                         border: none;
                     }
-                    #extended_tool_box_input_area div {
-                        margin-bottom: 0.5em;
+                    #extended_tool_box_input_area > div {
+                        margin-bottom: 2em;
+                    }
+                    #extended_tool_box_checkbox_area > div {
+                        margin-bottom: 1em;
                     }
                     #extended_tool_box_input_area label {
                         border-bottom: 1px solid gray;
@@ -207,6 +210,9 @@ $(document).ready(function() {
                     #extended_tool_box_checkbox_area,
                     #extended_tool_box_button_area {
                         margin-bottom: 1em;
+                    }
+                    #extended_tool_box_content_form > div {
+                        margin-bottom: 2em;
                     }
                 </style>
             */}
