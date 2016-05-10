@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         UserScript_for_king_of_time
 // @namespace    https://raw.githubusercontent.com/vicboss1002/kot_ui/master/UserScript_for_king_of_time.user.js
-// @version      3.0.0
+// @version      3.0.1
 // @updateURL    https://raw.githubusercontent.com/vicboss1002/kot_ui/master/UserScript_for_king_of_time.user.js
 // @downloadURL  https://raw.githubusercontent.com/vicboss1002/kot_ui/master/UserScript_for_king_of_time.user.js
 // @supportURL   https://github.com/vicboss1002/kot_ui/issues
@@ -108,8 +108,10 @@ $(document).ready(function() {
                     #extended_tool_box_wrapper {
                         background: white;
                         width: 300px;
+                        margin-right: 1em;
                     }
                     #extended_tool_box {
+                      padding-right: 1em;
                       position: fixed;
                       top: 0;
                       width: 300px;
@@ -233,7 +235,7 @@ $(document).ready(function() {
     };
 
     // -----初期化
-　　// セッションストレージから値を読み取る
+    // セッションストレージから値を読み取る
     $extentedToolBox.self.find(':input').each(function(e) {
         var value = sessionStorage.getItem($(this).attr('id'), $(this).val());
         $(this).val(value);
@@ -242,7 +244,11 @@ $(document).ready(function() {
     // -----イベントハンドラを登録
     // [拡張ツールボックス表示]ボタンのクリック処理
     $(document).find('#my_view_button').click(function(e) {
-        $extentedToolBox.wrapper.toggle();
+        if ($extentedToolBox.wrapper.is(':hidden')) {
+            $extentedToolBox.wrapper.show(200);
+        } else {
+            $extentedToolBox.wrapper.hide(100);
+        }
     });
 
     // <input>タグの値変更時の処理
@@ -259,11 +265,6 @@ $(document).ready(function() {
     // チェックボックスをクリック時の処理
     $extentedToolBox.self.find('input[type=checkbox]').click(function() {
         $(this).val($(this).prop('checked'));
-    });
-
-    // [×]ボタン動作
-    $extentedToolBox.self.find('#my_dialog_close').click(function() {
-        $extentedToolBox.self.hide();
     });
 
     // [スケジュール入力]ボタン動作
