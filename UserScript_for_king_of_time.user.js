@@ -1,18 +1,18 @@
 // ==UserScript==
 // @name         UserScript_for_king_of_time
 // @namespace    https://raw.githubusercontent.com/vicboss1002/kot_ui/master/UserScript_for_king_of_time.user.js
-// @version      3.0.2
+// @version      4.0.0
 // @updateURL    https://raw.githubusercontent.com/vicboss1002/kot_ui/master/UserScript_for_king_of_time.user.js
 // @downloadURL  https://raw.githubusercontent.com/vicboss1002/kot_ui/master/UserScript_for_king_of_time.user.js
 // @supportURL   https://github.com/vicboss1002/kot_ui/issues
-// @description  This script will be running on the site of "King of Time".
+// @description  This script will be running on the site of "King of Time". This will help you to input schedule pattern monthly.
 // @author       daisuke.f
 // @include      https://s3.kingtime.jp/admin/*
 // @exclude      https://s3.kingtime.jp/admin/
 // @exclude      https://s3.kingtime.jp/admin/*?page_id=/employee/request_list*
 // @exclude      https://s3.kingtime.jp/admin/*?page_id=/employee/change_password*
 // @exclude      https://s3.kingtime.jp/admin/*?page_id=/schedule/schedule_pattern_list_for_employee*
-// @require     https://code.jquery.com/jquery-3.1.1.slim.min.js
+// @require      https://code.jquery.com/jquery-3.1.1.slim.min.js
 // @grant        GM_addStyle
 // @grant        GM_getResourceText
 // ==/UserScript==
