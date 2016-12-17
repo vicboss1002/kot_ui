@@ -12,7 +12,7 @@
 // @exclude      https://s3.kingtime.jp/admin/*?page_id=/employee/request_list*
 // @exclude      https://s3.kingtime.jp/admin/*?page_id=/employee/change_password*
 // @exclude      https://s3.kingtime.jp/admin/*?page_id=/schedule/schedule_pattern_list_for_employee*
-// @required     https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js
+// @require     https://code.jquery.com/jquery-3.1.1.slim.min.js
 // @grant        GM_addStyle
 // @grant        GM_getResourceText
 // ==/UserScript==
@@ -23,104 +23,92 @@
 // 　2.初期処理
 // 　3.イベント登録
 // 　4.終了処理
-$(document).ready(function() {
+$(document).ready(function () {
     // -----定義
+    var targets = {
+        'select_schedule_pattern_id': 'スケジュールパターン',
+        'schedule_start_time_hour': '出勤予定（時）',
+        'schedule_start_time_minute': '出勤予定（分）',
+        'schedule_end_time_hour': '退勤予定（時）',
+        'schedule_end_time_minute': '退勤予定（分）',
+        'schedule_break_minute': '休憩予定時間'
+    };
     // ----HTML定義
-
     // ヒアドキュメントを生成
     var hereDocumentBuilder = {
-        build: function(name) {
+        build: function (name) {
             var target = this.documents[name];
-            return target? target.toString().match(/[^]*\/\*([^]*)\*\/\}$/)[1]: "";
+            return target ? target.toString().match(/[^]*\/\*([^]*)\*\/\}$/)[1] : "";
         },
         documents: {
+            defineListFormat: function() {/*
+                <tr>
+                    <th>${label}</th>
+                    <td>${id}</td>
+                </tr>
+            */},
             // 拡張ツールボックスのボタンのタグ
-            viewButton: function() {/*
-                <button id="my_view_button">拡張<br />ツールボックス<br />表示</button>
+            viewButton: function () {/*
+                <button id="extended_tool_box_settings_toggle">拡張<br />ツールボックス<br />表示</button>
             */},
             // 拡張ツールボックスのタグ
-            extendedToolBox: function() {/*
+            extendedToolBox: function () {/*
                 <div id="extended_tool_box_wrapper">
-                    <div id="extended_tool_box">
+                    <section id="extended_tool_box">
+                        <header>
+                            <h1>拡張ツールボックス</h1>
+                        </header>
                         <div id="extended_tool_box_content">
+                            <h2>設定</h2>
                             <form id="extended_tool_box_content_form">
-                                <div id="extended_tool_box_input_area">
-                                    <div>
-                                        <label for="extended_tool_box_schedule_pattern" class="extended_tool_box_labels">スケジュールパターン</label>
-                                        <div class="extended_tool_box_inputs">
-                                            <select id="extended_tool_box_schedule_pattern">
-                                                <option value="常駐">常駐</option>
-                                                <option value="休出">休出</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <label for="my_start_time_hour my_start_time_minute" class="extended_tool_box_labels">出勤予定</label>
-                                        <div class="extended_tool_box_inputs">
-                                            <input type="number" id="my_start_time_hour" />時<input type="number" id="my_start_time_minute" />分
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <label for="my_end_time_hour my_end_time_minute" class="extended_tool_box_labels">退勤予定</label>
-                                        <div  class="extended_tool_box_inputs">
-                                            <input type="number" id="my_end_time_hour" />時<input type="number" id="my_end_time_minute" />分
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <label for="my_rest_time" class="extended_tool_box_labels">休憩予定時間</label>
-                                        <div class="extended_tool_box_inputs">
-                                            <input type="number" id="my_rest_time">分
-                                        </div>
-                                    </div>
-                                </div><!-- #extended_tool_box_input_area -->
                                 <div id="extended_tool_box_checkbox_area">
-                                    <div class="extended_tool_box_checkboxes">
-                                        <label for="extended_tool_box_anytime_show" title="この拡張ツールボックスを常に表示状態とします。">
-                                            <input type="checkbox" id="extended_tool_box_anytime_show" value="false" />常に表示する
-                                        </label>
-                                    </div>
-                                    <div class="extended_tool_box_checkboxes">
-                                        <label for="extended_tool_box_auto_input" title="スケジュール申請画面が入力値と同期されます。">
-                                            <input type="checkbox" id="extended_tool_box_auto_input" value="false" />スケジュール入力値を同期する
-                                        </label>
-                                    </div>
+                                    <input type="checkbox" id="extended_tool_box_always_showing" />
+                                    <label for="extended_tool_box_always_showing" title="設定画面を常に開いた状態にします。" class="check_css">常に設定を開く</label>
+                                    <input type="checkbox" id="extended_tool_box_input_value_saving" checked />
+                                    <label for="extended_tool_box_input_value_saving" title="入力値を保存します。" class="check_css">入力ボックスの状態を記憶</label>
+                                    <input type="checkbox" id="extended_tool_box_auto_restoration" checked />
+                                    <label for="extended_tool_box_auto_restoration" title="記憶した入力ボックスの状態を自動復元します。" class="check_css">記憶した入力ボックスの状態を復元</label>
                                 </div><!-- #extended_tool_box_checkbox_area -->
                                 <div id="extended_tool_box_button_area">
-                                    <button type="reset">リセット</button>
-                                    <button type="button" id="my_schedule_enter_button">スケジュール入力</button>
+                                    <button type="button" id="extended_tool_box_input_value_clear" class="btn">記憶した入力ボックスの状態をクリアする</button>
                                 </div><!-- #extended_tool_box_button_area -->
                             </form>
+                            <h2記憶する入力ボックス</h2>
+                            <table id="extended_tool_box_targets" class="type04">
+                                <!-- 入力値記憶対象を表示 -->
+                            </table><!-- extended_tool_box_targets -->
                         </div><!-- #extended_tool_box_content -->
-                    </div><!-- #extended_tool_box -->
+                    </section><!-- #extended_tool_box -->
                 </div>
             */},
             // CSSのタグ
-            style: function() {/*
-                <style id="my_dialog_style">
+            style: function () {/*
+                <style id="extended_tool_box_styles">
                     #extended_tool_box_wrapper * {
                         margin: 0;
                         padding: 0;
                         font-family: メイリオ;
                         vertical-align: middle
                         text-decoration: none;
-                        font-size: 9pt;
+                        font-size: 10pt;
+                        line-height: 1.5;
                     }
                     #extended_tool_box_wrapper {
-                        background: white;
                         width: 300px;
                         margin-right: 1em;
                     }
                     #extended_tool_box {
-                      padding-right: 1em;
-                      position: fixed;
-                      top: 0;
-                      width: 300px;
-                      box-shadow: 5px 0px 5px 2px silver;
-                      z-index: 9999;
-                      height: 100%;
+                        color: #666;
+                        background: white;
+                        padding: 1em;
+                        position: fixed;
+                        top: 0;
+                        width: 300px;
+                        box-shadow: 5px 0px 5px 2px silver;
+                        z-index: 9999;
+                        height: 100%;
                     }
-
-                    #my_view_button {
+                    #extended_tool_box_settings_toggle {
                         font-size: 0.2em;
                         background-color: DarkBlue;
                         color: white;
@@ -130,12 +118,12 @@ $(document).ready(function() {
                         font-family: メイリオ;
                         transition: 0.1s;
                     }
-                    #my_view_button:hover {
+                    #extended_tool_box_settings_toggle:hover {
                         background-color: gray;
                         transform: rotate(20deg);
                     }
-                    #extended_tool_box h2 {
-                        font-size: 1em
+                    #extended_tool_box h1,#extended_tool_box h2 {
+                        margin-bottom: 1em;
                     }
                     #extended_tool_box input, #extended_tool_box select {
                         background: white;
@@ -162,13 +150,6 @@ $(document).ready(function() {
                     .my_dialog_labels {
                         text-align: center;
                     }
-                    .my_dialog_checkboxes {
-                        vertical-align: middle
-                    }
-                    #extended_tool_box_checkbox_area {
-                        padding: 0 2%;
-                        clear: both
-                    }
                     #extended_tool_box_button_area {
                         margin: 0 0 0.5em 0;
                         text-align: center
@@ -187,15 +168,9 @@ $(document).ready(function() {
                     #extended_tool_box_input_area > div {
                         margin-bottom: 2em;
                     }
-                    #extended_tool_box_checkbox_area > div {
-                        margin-bottom: 1em;
-                    }
                     #extended_tool_box_input_area label {
                         border-bottom: 1px solid gray;
                         margin-bottom: 0.5em;                        
-                    }
-                    #extended_tool_box button {
-                        padding: 0.5em 2em;
                     }
                     #extended_tool_box_close {
                         position: absolute;
@@ -207,117 +182,204 @@ $(document).ready(function() {
                         border: none
                     }
                     #extended_tool_box_input_area, 
-                    #extended_tool_box_checkbox_area,
                     #extended_tool_box_button_area {
                         margin-bottom: 1em;
                     }
                     #extended_tool_box_content_form > div {
                         margin-bottom: 2em;
                     }
+
+                    input[type=checkbox] {
+                        display: none;
+                    }
+                    #extended_tool_box .check_css {
+                        -webkit-transition: background-color 0.2s linear;
+                        transition: background-color 0.2s linear;
+                        position: relative;
+                        display: inline-block;
+                        padding: 0 0 0 42px;
+                        vertical-align: middle;
+                        cursor: pointer;
+                    }
+                    #extended_tool_box .check_css:hover:after {
+                        border-color: #0171bd;
+                    }
+                    #extended_tool_box .check_css:after {
+                        -webkit-transition: border-color 0.2s linear;
+                        transition: border-color 0.2s linear;
+                        position: absolute;
+                        top: 50%;
+                        left: 15px;
+                        display: block;
+                        margin-top: -10px;
+                        width: 16px;
+                        height: 16px;
+                        border: 2px solid #ccc;
+                        border-radius: 6px;
+                        content: '';
+                    }
+                    #extended_tool_box .check_css:before {
+                        -webkit-transition: opacity 0.2s linear;
+                        transition: opacity 0.2s linear;
+                        position: absolute;
+                        top: 50%;
+                        left: 21px;
+                        display: block;
+                        margin-top: -7px;
+                        width: 5px;
+                        height: 9px;
+                        border-right: 3px solid #0171bd;
+                        border-bottom: 3px solid #0171bd;
+                        content: '';
+                        opacity: 0;
+                        -webkit-transform: rotate(45deg);
+                        -ms-transform: rotate(45deg);
+                        transform: rotate(45deg);
+                    }
+                    #extended_tool_box input[type=checkbox]:checked + .check_css:before {
+                        opacity: 1;
+                    }
+ 
+                    #extended_tool_box table.type04 {
+                        border-collapse: separate;
+                        border-spacing: 1px;
+                        text-align: left;
+                        line-height: 1.5;
+                        border-top: 1px solid #ccc;
+                        width: 100%;
+                    }
+                    #extended_tool_box table.type04 th {
+                        font-size: 0.5em;
+                        padding: 10px;
+                        font-weight: bold;
+                        vertical-align: top;
+                        border-bottom: 1px solid #ccc;
+                    }
+                    #extended_tool_box table.type04 td {
+                        font-size: 0.5em;
+                        padding: 10px;
+                        vertical-align: top;
+                        border-bottom: 1px solid #ccc;
+                    }
+                    #extended_tool_box .btn {
+                        background: #09C;
+                        border: 1px solid #DDD;
+                        color: #FFF;
+                        text-shadow: 0px 1px 1px rgba(255,255,255,0.85),0px 0px 5px rgba(0,0,0,1);
+                        width: 100%;
+                        padding: 10px 0;
+                    }
                 </style>
             */}
         }
     };
+
     // CSSを定義
     $('head').append(hereDocumentBuilder.build('style'));
+
     // 拡張ツールボックスボタンを生成
     $('#menu_container').append(hereDocumentBuilder.build('viewButton'));
     // 拡張ツールボックスの定義
     $('body > table > tbody > tr').prepend(hereDocumentBuilder.build('extendedToolBox'));
     // 拡張ツールボックスのクローンオブジェクト
-    var $extentedToolBox = {
+    var $extendedToolBox = {
         self: $(document).find('#extended_tool_box'),
         wrapper: $(document).find('#extended_tool_box_wrapper'),
         content: {
             self: $(document).find('#extended_tool_box_content'),
+            targets: $(document).find('#extended_tool_box_targets'),
             form: $(document).find('#extended_tool_box_content_form'),
             inputArea: $(document).find('#extended_tool_box_input_area'),
             checkboxArea: $(document).find('#extended_tool_box_checkbox_area'),
             buttonArea: $(document).find('#extended_tool_box_button_area'),
         },
-        anyTimeShow: $(document).find('#extended_tool_box_anytime_show'),
-        autoInput: $(document).find('#extended_tool_box_auto_input'),
-        schedulePattern: $(document).find('#extended_tool_box_schedule_pattern')
+        alwaysShowing: $(document).find('#extended_tool_box_always_showing'),
+        autoRestoration: $(document).find('#extended_tool_box_auto_restoration'),
+        inputValueSaving: $(document).find('#extended_tool_box_input_value_saving'),
+        inputValueClear: $(document).find('#extended_tool_box_input_value_clear')
     };
 
     // -----初期化
-    // セッションストレージから値を読み取る
-    $extentedToolBox.self.find(':input').each(function(e) {
-        var value = sessionStorage.getItem($(this).attr('id'), $(this).val());
-        $(this).val(value);
+    // 復元対象の入力ボックスをテーブル表示
+    var targetsTableItems = '';
+    Object.keys(targets).forEach(function(e) {
+        targetsTableItems += hereDocumentBuilder.build('defineListFormat').replace('${label}', targets[e]).replace('${id}', e);
+    });
+    $extendedToolBox.content.targets.append(targetsTableItems);
+    // 設定の初期化
+    // (チェックボックス and ラジオボタン)の場合
+    $extendedToolBox.self.find(':input[type=checkbox], :input[type=radio]').each(function(e) {
+        var $in = $(this);
+        var checked = localStorage.getItem($in.prop('id'));
+        // 設定値が
+        if (checked !== null) {
+            $in.prop('checked', (checked === 'true'));
+        }
+    });
+    // 設定値の保存
+    // (チェックボックス and ラジオボタン)の場合
+    $extendedToolBox.self.find(':input[type=checkbox], :input[type=radio]').on('change', function(e) {
+        var $in = $(this);
+        localStorage.setItem($in.prop('id'), $in.prop('checked'));
     });
 
-    // -----イベントハンドラを登録
-    // [拡張ツールボックス表示]ボタンのクリック処理
-    $(document).find('#my_view_button').click(function(e) {
-        if ($extentedToolBox.wrapper.is(':hidden')) {
-            $extentedToolBox.wrapper.show(200);
-        } else {
-            $extentedToolBox.wrapper.hide(100);
+    // 入力ボックスを初期化
+    $(document).find(':input').each(function (e) {
+        var $in = $(this);
+        // 入力ボックスを復元するがチェック状態の場合
+        if ($extendedToolBox.autoRestoration.prop('checked') && Object.keys(targets).indexOf($in.prop('id')) !== -1) {
+            // 入力ボックスの状態を復元する
+            var val = sessionStorage.getItem($in.prop('id'));
+            $in.val(val);
+        }
+    });
+    // (チェックボックス and ラジオボタン）の場合
+    // $(document).on('change', ':input[type=checkbox], :input[type=radio]', function(e) {
+    //     var $in = $(this);
+    //     if (Object.keys(targets).indexOf($in.prop('id')) === -1) return;
+    //     sessionStorage.setItem($in.prop('id'), $in.prop('checked'));
+    // });
+    // (チェックボックス and ラジオボタン)以外の場合
+    $(document).on('change', ':input:not([type=checkbox], [type=radio])', function (e) {
+        var $in = $(this);
+        //if (/extended_tool_box.*/.test($in.prop('id'))) return; // 拡張ツールボックス内の入力ボックスは除外
+        var targetKeys = Object.keys(targets);
+        if ($extendedToolBox.inputValueSaving.prop('checked') && targetKeys.indexOf($in.prop('id')) !== -1) {
+            targetKeys.forEach(function(e) {
+                sessionStorage.setItem(e, $('#' + e).val()); // セッションストレージに値を保存する
+            });
         }
     });
 
-    // <input>タグの値変更時の処理
-    // セッションストレージに値を保存
-    $extentedToolBox.self.find(':input').live('change', function(e) {
-        if (!$(this).prop('id')) return false;
-        sessionStorage.setItem($(this).attr('id'), $(this).val()); // セッションストレージに値を保存する
+
+
+    // -----イベントハンドラを登録
+    // [拡張ツールボックス表示]ボタンのクリック処理
+    $(document).on('click', '#extended_tool_box_settings_toggle', function (e) {
+        if ($extendedToolBox.wrapper.is(':hidden')) {
+            $extendedToolBox.wrapper.show(200);
+        } else {
+            $extendedToolBox.wrapper.hide(100);
+        }
     });
+
     // [リセット]ボタン
-    $extentedToolBox.self.find(':input[type=reset]').live('click', function(e) {
+    $extendedToolBox.inputValueClear.on('click', function (e) {
         sessionStorage.clear();
+        alert('記憶した入力ボックスの状態をクリアしました。');
     });
-
-    // チェックボックスをクリック時の処理
-    $extentedToolBox.self.find('input[type=checkbox]').click(function() {
-        $(this).val($(this).prop('checked'));
-    });
-
-    // [スケジュール入力]ボタン動作
-    $extentedToolBox.content.buttonArea.find('#my_schedule_enter_button').click(function() {
-        // スケジュール申請ページの判定
-        // 入力対象が見つからなければ処理をスキップする
-        if ($('#select_schedule_pattern_id').size() !== 1) return false;
-        //var schedule_pattern = $('#my_dialog_schedule_pattern').val();
-        $('#select_schedule_pattern_id > option').each(function(e) {
-            if($(this).text() === $extentedToolBox.schedulePattern.val()) {
-                $(this).attr('selected', true);
-            } else {
-                $(this).attr('selected', false);
-            }
-        });
-        var startTimeHour = $('#my_start_time_hour').val(), startTimeMinute = $('#my_start_time_minute').val();
-        var endTimeHour = $('#my_end_time_hour').val(), endTimeMinute = $('#my_end_time_minute').val();
-        var restTime = $('#my_rest_time').val();
-        $('#schedule_start_time_hour').val(startTimeHour);
-        $('#schedule_start_time_minute').val(startTimeMinute);
-        $('#schedule_end_time_hour').val(endTimeHour);
-        $('#schedule_end_time_minute').val(endTimeMinute);
-        $('#schedule_break_minute').val(restTime);
-    });
-
 
     //-----終了処理
     // ダイアログ内の送信処理は中断
-    $extentedToolBox.self.find('form').submit(function(e) {
-        return confirm('拡張ダイアログ内で送信処理が検出されました。\n続行しますか？');
-    });
-    // チェックボックスの状態反映
-    $extentedToolBox.self.find('input[type=checkbox]').each(function(e) {
-        var checked = $(this).val().toLowerCase() === 'true';
-        $(this).prop('checked', checked);
+    $extendedToolBox.self.find('form').submit(function (e) {
+        return confirm('拡張ツールボックス内で送信処理が検出されました。\n続行しますか？');
     });
 
     // 画面遷移時に表示するチェック時の動作
-    if ($extentedToolBox.anyTimeShow.prop('checked')) {
-        $extentedToolBox.wrapper.show();
+    if ($extendedToolBox.alwaysShowing.prop('checked')) {
+        $extendedToolBox.wrapper.show();
     } else {
-        $extentedToolBox.wrapper.hide();
-    }
-
-    // スケジュール入力値を同期するチェック時の動作
-    if ($extentedToolBox.autoInput.val() === 'true') {
-        $extentedToolBox.self.find('#my_schedule_enter_button').click();
+        $extendedToolBox.wrapper.hide();
     }
 
 });
