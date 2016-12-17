@@ -73,7 +73,7 @@ $(document).ready(function () {
                                     <button type="button" id="extended_tool_box_input_value_clear" class="btn">記憶した入力ボックスの状態をクリアする</button>
                                 </div><!-- #extended_tool_box_button_area -->
                             </form>
-                            <h2記憶する入力ボックス</h2>
+                            <h2>記憶する入力ボックス</h2>
                             <table id="extended_tool_box_targets" class="type04">
                                 <!-- 入力値記憶対象を表示 -->
                             </table><!-- extended_tool_box_targets -->
