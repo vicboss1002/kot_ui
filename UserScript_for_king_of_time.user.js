@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         UserScript_for_king_of_time
 // @namespace    https://raw.githubusercontent.com/vicboss1002/kot_ui/master/UserScript_for_king_of_time.user.js
-// @version      4.0.1
+// @version      4.1.1
 // @updateURL    https://raw.githubusercontent.com/vicboss1002/kot_ui/master/UserScript_for_king_of_time.user.js
 // @downloadURL  https://raw.githubusercontent.com/vicboss1002/kot_ui/master/UserScript_for_king_of_time.user.js
 // @supportURL   https://github.com/vicboss1002/kot_ui/issues
@@ -42,9 +42,9 @@ $(document).ready(function () {
         },
         documents: {
             defineListFormat: function() {/*
-                <tr>
+                <tr id="${id}">
                     <th>${label}</th>
-                    <td>${id}</td>
+                    <td>${targetId}</td>
                 </tr>
             */},
             // 拡張ツールボックスのボタンのタグ
@@ -67,7 +67,7 @@ $(document).ready(function () {
                                     <input type="checkbox" id="extended_tool_box_input_value_saving" checked />
                                     <label for="extended_tool_box_input_value_saving" title="入力値を保存します。" class="check_css">入力ボックスの状態を記憶</label>
                                     <input type="checkbox" id="extended_tool_box_auto_restoration" checked />
-                                    <label for="extended_tool_box_auto_restoration" title="記憶した入力ボックスの状態を自動復元します。" class="check_css">記憶した入力ボックスの状態を復元</label>
+                                    <label for="extended_tool_box_auto_restoration" title="記憶した入力ボックスの状態を自動復元します。" class="check_css">入力ボックスの状態を復元</label>
                                 </div><!-- #extended_tool_box_checkbox_area -->
                                 <div id="extended_tool_box_button_area">
                                     <button type="button" id="extended_tool_box_input_value_clear" class="btn">記憶した入力ボックスの状態をクリアする</button>
@@ -75,6 +75,10 @@ $(document).ready(function () {
                             </form>
                             <h2>記憶する入力ボックス</h2>
                             <table id="extended_tool_box_targets" class="type04">
+                                <tr>
+                                    <th>名前</th>
+                                    <th>ID</th>
+                                </tr>
                                 <!-- 入力値記憶対象を表示 -->
                             </table><!-- extended_tool_box_targets -->
                         </div><!-- #extended_tool_box_content -->
@@ -303,7 +307,22 @@ $(document).ready(function () {
     // 復元対象の入力ボックスをテーブル表示
     var targetsTableItems = '';
     Object.keys(targets).forEach(function(e) {
-        targetsTableItems += hereDocumentBuilder.build('defineListFormat').replace('${label}', targets[e]).replace('${id}', e);
+        var id = 'target_' + e;
+        var idSelector = '#' + id;
+        var targetIdSelector = '#' + e;
+        $(document).on('mouseover', idSelector, function() {
+            $(this).find('th, td').css('background-color', 'yellow');
+            $(targetIdSelector).css('background-color', 'yellow'); 
+        }).on('mouseout', idSelector, function() {
+            $(this).find('th, td').css('background-color', '');
+            $(targetIdSelector).css('background-color', '');
+        });
+        
+        targetsTableItems += hereDocumentBuilder
+            .build('defineListFormat')
+            .replace('${label}', targets[e])
+            .replace('${targetId}', targetIdSelector)
+            .replace('${id}', id);
     });
     $extendedToolBox.content.targets.append(targetsTableItems);
     // 設定の初期化
